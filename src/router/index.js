@@ -4,10 +4,24 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
   const routes = [
+    {
+      path: '/',
+      redirect: '/index',
+    },
   {
-    path: '/',
+    path: '/index',
     name: 'Home',
-    component: () => import (/* webpackChunkName: "index" */ '../views/index/index.vue')
+    meta: {
+      isTab: true
+    },
+    component: () => import (/* webpackChunkName: "index" */ '../views/index/index.vue'),
+    children: [
+      {
+        path: '/zqdetail',
+        name: '灾情详情',
+        component: () => import (/* webpackChunkName: "index" */ '../views/index/zdDetail.vue')
+      }
+    ]
   },
   {
     path: '/handPic',

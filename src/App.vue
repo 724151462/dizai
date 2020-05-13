@@ -16,6 +16,9 @@ export default{
     return {
       active: 0,
     };
+  },
+  mounted(){
+    console.log(this.$route)
   }
 }
 </script>
