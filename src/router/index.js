@@ -15,13 +15,11 @@ Vue.use(VueRouter)
       isTab: true
     },
     component: () => import (/* webpackChunkName: "index" */ '../views/index/index.vue'),
-    children: [
-      {
-        path: '/zqdetail',
-        name: '灾情详情',
-        component: () => import (/* webpackChunkName: "index" */ '../views/index/zdDetail.vue')
-      }
-    ]
+  },
+  {
+    path: '/index/zqdetail',
+    name: '灾情详情',
+    component: () => import (/* webpackChunkName: "index" */ '../views/index/zdDetail.vue')
   },
   {
     path: '/handPic',

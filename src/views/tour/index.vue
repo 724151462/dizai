@@ -1,6 +1,7 @@
 <template>
   <div>
     <navBar :title="'巡查'" :isBack="false"></navBar>
+    <bottomTabs></bottomTabs>
   </div>
 </template>
 

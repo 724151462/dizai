@@ -8,6 +8,9 @@
 .al-center{
 	align-items: center;
 }
+.al-start{
+	align-items: start;
+}
 .pu-row-sb{
 	justify-content: space-between;
 }
@@ -83,9 +86,27 @@
 .f-12{
 	font-size: 12px;
 }
+.f-22{
+	font-size: 22px;
+}
 .flex-wrap{
 	flex-wrap: wrap;
 }
 .t-center{
 	text-align: center;
+}
+
+.img-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.avatar-sm{
+	border-radius: 50px;
+	height: 30px;
+	width: 30px;
+}
+
+.border-split {
+	border-bottom: 5px solid #F8F8FB;
 }

@@ -88,8 +88,9 @@
           </div>
         </div>
       </div>
-      <van-button style="width: 180px" round type="warning">详情</van-button>
+      <van-button @click="toDetail" style="width: 180px" round type="warning">详情</van-button>
     </van-popup>
+    <bottomTabs></bottomTabs>
   </div>
 </template>
 
@@ -234,6 +235,9 @@ export default {
       }
       window.map.setFitView();
     },
+    toDetail() {
+      this.$router.push({path: '/index/zqdetail'})
+    }
   },
 };
 </script>
@@ -254,10 +258,6 @@ export default {
 }
 .active {
   color: #ee4d47;
-}
-.img-wrapper {
-  width: 100%;
-  overflow-x: auto;
 }
 .dz-detail {
 }
