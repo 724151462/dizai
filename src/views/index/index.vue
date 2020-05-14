@@ -242,7 +242,7 @@ export default {
 };
 </script>
 
-<style>
+<style scope>
 #map {
   height: calc(100vh - 100px);
   width: 100%;

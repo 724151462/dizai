@@ -1,6 +1,20 @@
 <template>
-  <div>
+  <div class="pu-bg">
     <navBar :title="'巡查'" :isBack="false"></navBar>
+    <div class="pad-lr-10 mar-t-10 pad-t-10 ">
+      <router-link :to="{path: '/tour/sign'}" class="tour-menu pu-row mar-t-10">
+        <img width="82" src="../../assets/imgs/qd.png" alt="">
+        <span>巡查签到</span>
+      </router-link>
+      <router-link :to="{path: '/tour/subao'}" class="tour-menu pu-row mar-t-10">
+        <img width="82" src="../../assets/imgs/subao.png" alt="">
+        <span>灾（险）情速报</span>
+      </router-link>
+      <router-link :to="{path: ''}" class="tour-menu pu-row mar-t-10">
+        <img width="82" src="../../assets/imgs/shangbao.png" alt="">
+        <span>灾（险）情上报</span>
+      </router-link>
+    </div>
     <bottomTabs></bottomTabs>
   </div>
 </template>
@@ -11,6 +25,16 @@ export default {
 }
 </script>
 
-<style>
-
+<style scope>
+  .tour-menu{
+    border-radius: 12px;
+    box-shadow: 2px 1px 16px rgb(247, 234, 237);
+    background-color: #fff;
+    padding: 20px 50px;
+    color: rgb(119, 119, 119);
+  }
+  .tour-menu>span{
+    font-size: 24px;
+    margin-left: 30px;
+  }
 </style>

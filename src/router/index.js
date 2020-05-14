@@ -29,12 +29,22 @@ Vue.use(VueRouter)
   {
     path: '/tour',
     name: 'tour',
-    component: () => import (/* webpackChunkName: "index" */ '../views/tour/index.vue')
+    component: () => import (/* webpackChunkName: "tour" */ '../views/tour/index.vue')
+  },
+  {
+    path: '/tour/sign',
+    name: '巡查签到',
+    component: () => import (/* webpackChunkName: "tour" */ '../views/tour/sign.vue')
+  },
+  {
+    path: '/tour/subao',
+    name: '速报',
+    component: () => import (/* webpackChunkName: "tour" */ '../views/tour/subao.vue')
   },
   {
     path: '/mine',
     name: 'mine',
-    component: () => import (/* webpackChunkName: "index" */ '../views/mine/index.vue')
+    component: () => import (/* webpackChunkName: "mine" */ '../views/mine/index.vue')
   }
 ]
 

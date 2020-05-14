@@ -110,3 +110,20 @@
 .border-split {
 	border-bottom: 5px solid #F8F8FB;
 }
+
+.al-start{
+	align-items: start;
+}
+
+.pu-bg{
+	background-color: #fbf8f8;
+	height: 100vh;
+	position: relative;
+	width: 100%;
+}
+.border-b{
+	border-bottom: 1px solid #ebedf0;
+}
+.border-b-deep{
+	border-bottom: 1px solid #c8c9cc;
+}
