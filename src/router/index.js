@@ -23,12 +23,17 @@ Vue.use(VueRouter)
   },
   {
     path: '/handPic',
-    name: 'handPic',
+    name: '随手拍首页',
     component: () => import (/* webpackChunkName: "index" */ '../views/handPic/index.vue')
   },
   {
+    path: '/handPic/upload',
+    name: '随手拍上传',
+    component: () => import (/* webpackChunkName: "index" */ '../views/handPic/handUpload.vue')
+  },
+  {
     path: '/tour',
-    name: 'tour',
+    name: '巡查签到首页',
     component: () => import (/* webpackChunkName: "tour" */ '../views/tour/index.vue')
   },
   {
@@ -42,8 +47,13 @@ Vue.use(VueRouter)
     component: () => import (/* webpackChunkName: "tour" */ '../views/tour/subao.vue')
   },
   {
+    path: '/tour/shangbao',
+    name: '上报',
+    component: () => import (/* webpackChunkName: "tour" */ '../views/tour/shangbao.vue')
+  },
+  {
     path: '/mine',
-    name: 'mine',
+    name: '我的首页',
     component: () => import (/* webpackChunkName: "mine" */ '../views/mine/index.vue')
   },
   {
@@ -65,7 +75,32 @@ Vue.use(VueRouter)
     path: '/personal/disasterReport',
     name: '个人中心灾情上报',
     component: () => import (/* webpackChunkName: "mine" */ '../views/personal/disasterReport.vue')
-  }
+  },
+  {
+    path: '/mine/detail',
+    name: '我的详情',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/mine/infoDetail.vue')
+  },
+  {
+    path: '/mine/handPic',
+    name: '我的随手拍',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/mine/mineHandPic.vue')
+  },
+  {
+    path: '/mine/qzHandPic',
+    name: '群众随手拍',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/mine/qzHandPic.vue')
+  },
+  {
+    path: '/mine/toursignrecord',
+    name: '巡查记录',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/mine/tourSignRecord.vue')
+  },
+  {
+    path: '/mine/shangbaorecord',
+    name: '灾险情上报',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/mine/sbRecord.vue')
+  },
 ]
 
 const router = new VueRouter({

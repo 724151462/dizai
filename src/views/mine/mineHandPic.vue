@@ -1,12 +1,11 @@
 <template>
   <div>
-    <navBar :title="'随手拍'" :isBack="false"></navBar>
+    <navBar :title="'我的随手拍'"></navBar>
     <div v-for="(item,index) in 6" :key="index" class="pad-lr-10 pad-tb-10 pu-column al-start" :class="index !=6 ? 'border-split' : ''">
       <span class="f-22"><b>光泽县芝麻镇芝麻村15号</b></span>
       <span class="mar-tb-10">道路裂开</span>
       <div class="img-wrapper pu-row">
         <img
-          width="100"
           class="mar-r-5"
           v-for="(pic, index) in 7"
           src="../../assets/imgs/bad-bg.png"
@@ -15,14 +14,14 @@
           alt=""
         />
       </div>
-      <div class="mar-t-10 pu-row">
-        <img src="../../assets/imgs/bad-bg.png" class="avatar-sm" alt="">
-        <span class="mar-l-5">陈某某</span>
-        <span class="f-gray" style="margin-left: 30px">15:21</span>
+      <div class="mar-t-10 pu-row pu-row-sb" style="width: 100%">
+        <span class="f-gray">15:21</span>
+        <span style="color:#5ABEEF">删除</span>
       </div>
     </div>
-    
-    <bottomTabs></bottomTabs>
+    <div class="no-more">
+      <img src="../../assets/imgs/no-more.png" alt="">
+    </div>
   </div>
 </template>
 
@@ -32,6 +31,15 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="less" scope>
+.img-wrapper{
+  overflow-x: auto;
+  img{
+    height: 100px;
+    width: 100px;
+  }
+}
+.no-more{
+  background-color: #F8F8FB;
+}
 </style>
