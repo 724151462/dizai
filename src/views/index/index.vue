@@ -107,6 +107,7 @@ export default {
     return {
       pointPop: false,
       actIndex: 0,
+      dzPoints: [],
       dzd: [{ id: "", lng: "116.397428", lat: "39.90923" }],
       gdbp: [{ id: "", lng: "116.387428", lat: "39.90923" }],
       yxbj: [{ id: "", lng: "116.377428", lat: "39.90923" }],
@@ -121,6 +122,9 @@ export default {
   methods: {
     getPoints() {
       getPointsAPI({city: '松溪县', phone: ''})
+      .then(res => {
+        console.log(res)
+      })
     },
     initMap() {
       window.map = new AMap.Map("map", {
