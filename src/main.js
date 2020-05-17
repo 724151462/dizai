@@ -7,6 +7,7 @@ import 'vant/lib/index.less';
 import './assets/css/public.css';
 import navBar from './components/navBar.vue'
 import bottomTabs from './components/bottomTabs.vue'
+import personalHead from './components/personalHead.vue'
 
 let options = {
   fullscreenEl: true, //控制是否显示右上角全屏按钮
@@ -25,6 +26,7 @@ Vue.use(preview, options)
 
 Vue.component('navBar',navBar)
 Vue.component('bottomTabs',bottomTabs)
+Vue.component('personalHead',personalHead)
 
 Vue.use(Vant);
 

@@ -57,6 +57,26 @@ Vue.use(VueRouter)
     component: () => import (/* webpackChunkName: "mine" */ '../views/mine/index.vue')
   },
   {
+    path: '/personal/handPic',
+    name: '个人中心随手拍',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/personal/handPic.vue')
+  },
+  {
+    path: '/personal/chenkIn',
+    name: '个人中心巡查签到',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/personal/chenkIn.vue')
+  },
+  {
+    path: '/personal/disasterStudies',
+    name: '个人中心灾情速报',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/personal/disasterStudies.vue')
+  },
+  {
+    path: '/personal/disasterReport',
+    name: '个人中心灾情上报',
+    component: () => import (/* webpackChunkName: "mine" */ '../views/personal/disasterReport.vue')
+  },
+  {
     path: '/mine/detail',
     name: '我的详情',
     component: () => import (/* webpackChunkName: "mine" */ '../views/mine/infoDetail.vue')
