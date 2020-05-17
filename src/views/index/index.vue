@@ -2,6 +2,11 @@
   <div>
     <navBar :title="'首页'" :isBack="false"></navBar>
     <div id="map"></div>
+    <div class="hand-upload-btn">
+      <router-link :to="{path: '/handPic/upload'}">
+        <img src="../../assets/imgs/upload-btn.png" alt="">
+      </router-link>
+    </div>
     <div class="zq-menu pu-row pu-row-sa bg-white pad-tb-10">
       <div
         :class="['pu-column', actIndex == 0 ? 'active' : '']"
@@ -43,7 +48,7 @@
       v-model="pointPop"
       round
       position="bottom"
-      :style="{ height: '75%' }"
+    :style="{ height: '75%' }"
     >
       <div
         class="pu-column al-start pad-tb-10 pad-lr-10"
@@ -96,6 +101,7 @@
 
 <script>
 import AMap from "AMap";
+import {getPointsAPI} from '../../api/index'
 export default {
   data() {
     return {
@@ -110,8 +116,12 @@ export default {
   },
   mounted() {
     this.initMap();
+    this.getPoints();
   },
   methods: {
+    getPoints() {
+      getPointsAPI({city: '松溪县', phone: ''})
+    },
     initMap() {
       window.map = new AMap.Map("map", {
         resizeEnable: true,
@@ -150,10 +160,7 @@ export default {
               if (status === "complete" && result.info === "OK") {
                 //获得了有效的地址信息:
                 //即，result.regeocode.formattedAddress
-                console.log(result.regeocode.formattedAddress);
-                var address = result.regeocode.formattedAddress;
-                document.getElementById("address").innerHTML =
-                  "详细地址：" + address;
+                console.log(result.regeocode);
               } else {
                 //获取地址失败
               }
@@ -260,5 +267,14 @@ export default {
   color: #ee4d47;
 }
 .dz-detail {
+}
+.hand-upload-btn{
+  position: absolute;
+  z-index: 9999;
+  bottom: 160px;
+  right: 20px;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 10px;
 }
 </style>

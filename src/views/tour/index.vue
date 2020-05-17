@@ -10,7 +10,7 @@
         <img width="82" src="../../assets/imgs/subao.png" alt="">
         <span>灾（险）情速报</span>
       </router-link>
-      <router-link :to="{path: ''}" class="tour-menu pu-row mar-t-10">
+      <router-link :to="{path: '/tour/shangbao'}" class="tour-menu pu-row mar-t-10">
         <img width="82" src="../../assets/imgs/shangbao.png" alt="">
         <span>灾（险）情上报</span>
       </router-link>

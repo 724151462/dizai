@@ -38,4 +38,7 @@ export default{
     }
   }
 }
+.van-cell__title{
+  text-align: start;
+}
 </style>
