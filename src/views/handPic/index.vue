@@ -1,24 +1,27 @@
 <template>
   <div>
     <navBar :title="'随手拍'" :isBack="false"></navBar>
-    <div v-for="(item,index) in 6" :key="index" class="pad-lr-10 pad-tb-10 pu-column al-start" :class="index !=6 ? 'border-split' : ''">
-      <span class="f-22"><b>光泽县芝麻镇芝麻村15号</b></span>
-      <span class="mar-tb-10">道路裂开</span>
+    <div v-for="(item,index) in handList" :key="index" class="pad-lr-10 pad-tb-10 pu-column al-start" :class="index !=6 ? 'border-split' : ''">
+      <span class="f-22"><b>{{item.name}}</b></span>
+      <span class="mar-tb-10">{{item.content}}</span>
       <div class="img-wrapper pu-row">
-        <img
-          width="100"
-          class="mar-r-5"
-          v-for="(pic, index) in 7"
-          src="../../assets/imgs/bad-bg.png"
-          :key="index"
-          :preview="index" preview-text="描述文字"
-          alt=""
-        />
+        <templat v-if="item.image.length != 0">
+          <img
+            width="100"
+            class="mar-r-5"
+            v-for="(pic, index) in item.image"
+            :src="pic"
+            :key="index"
+            :preview="index" preview-text="描述文字"
+            alt=""
+          />
+        </templat>
+        <van-empty v-else description="暂无图片" />
       </div>
       <div class="mar-t-10 pu-row">
         <img src="../../assets/imgs/bad-bg.png" class="avatar-sm" alt="">
-        <span class="mar-l-5">陈某某</span>
-        <span class="f-gray" style="margin-left: 30px">15:21</span>
+        <span class="mar-l-5">{{item.username}}</span>
+        <span class="f-gray" style="margin-left: 30px">{{time(item.uptime)}}</span>
       </div>
     </div>
     
@@ -27,12 +30,36 @@
 </template>
 
 <script>
-// import han
+import {getHandListAPI} from '../../api/handPic'
 export default {
-
+  data() {
+    return {
+      handList: []
+    }
+  },
+  mounted() {
+    this.getHandList()
+  },
+  methods:{
+    time(time) {
+      return new Date(time*1000).getHours() +':'+ new Date(time*1000).getMinutes()
+    },
+    getHandList(){
+      getHandListAPI({
+        "phone" : "123456",
+        "type": "''",
+        "page": 1
+      }).then(res => {
+        this.handList = res.data
+        console.log(this.handList)
+      })
+    }
+  }
 }
 </script>
 
-<style>
-
+<style lang="less" scope>
+.van-empty{
+  padding: 0 !important;
+}
 </style>

@@ -5,8 +5,7 @@ export function get(url, params){
           params: params        
       }).then(res => {
           resolve(res.data);
-      }).catch(err =>{
-          alert(2)
+      }).catch(err =>{   
           reject(err.data)        
   })    
 });}

@@ -104,13 +104,31 @@
     </van-popup>
     
     <div class="typeButton">
-       <van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消列入</van-button>
+        <template v-if="info.status == '已办结'">
+            <van-button @click="cancellation" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消办结</van-button>
+            <van-button @click="includeList" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">列入</van-button>
+        </template>
+        <template v-if="info.status == '已上报'">
+            <van-button round type="info" @click="unsubscribe" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消上报</van-button>
+            <van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">编辑</van-button>
+            <van-button round type="info" @click="notPass" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">驳回</van-button>
+            <van-button round type="info" @click="finish" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">办结</van-button>
+        </template>
+        <van-button v-else-if="info.status == '已列入'" @click="delist" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消列入</van-button>
     </div>
   </div>
 </template>
 
 <script>
-import {getScheduleInfo} from '../../api/mine'
+import {
+    getScheduleInfo, 
+    operateUnsubscribeAPI, 
+    operateDelistAPI, 
+    operateCancellationAPI,
+    operateIncludeListAPI,
+    operateFinishAPI,
+    operatenotPassAPI
+} from '../../api/mine'
 export default {
     data(){
         return {
@@ -146,6 +164,30 @@ export default {
         }
     },
     methods: {
+        // 驳回
+        notPass() {
+            operatenotPassAPI({id: this.$route.query.id, phone: "''"})
+        },
+        // 办结
+        finish() {
+            operateFinishAPI({id: this.$route.query.id, phone: "''"})
+        },
+        // 列入
+        includeList() {
+            operateIncludeListAPI({id: this.$route.query.id, phone: "''"})
+        },
+        // 取消列入
+        delist() {
+            operateDelistAPI({id: this.$route.query.id, phone: "''"})
+        },
+        // 撤销上报
+        unsubscribe() {
+            operateUnsubscribeAPI({id: this.$route.query.id, phone: "''"})
+        },
+        // 撤销办结
+        cancellation() {
+            operateCancellationAPI({id: this.$route.query.id, phone: "''"})
+        },
         showPopup() {
             this.show = true;
         },

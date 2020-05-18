@@ -27,3 +27,21 @@ export const getReportingList = function (data) {
 export const cityList = function (data) {
   return get(URL+'cityList', data)
 }
+export const operateUnsubscribeAPI = function (data) {
+  return get(URL+'unsubscribe', data)
+}
+export const operateDelistAPI = function (data) {
+  return get(URL+'Delist', data)
+}
+export const operateCancellationAPI = function (data) {
+  return get(URL+'Cancellation', data)
+}
+export const operateIncludeListAPI = function (data) {
+  return get(URL+'IncludeList', data)
+}
+export const operateFinishAPI = function (data) {
+  return get(URL+'Finish', data)
+}
+export const operatenotPassAPI = function (data) {
+  return get(URL+'notPass', data)
+}

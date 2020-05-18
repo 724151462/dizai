@@ -53,14 +53,12 @@
       />
       <van-field
         v-model="wxNum"
-        readonly
         label="威胁人数"
         placeholder="请输入威胁人数"
         class="border-b"
       />
       <van-field
         v-model="tranNum"
-        readonly
         label="转移人数"
         placeholder="请输入转移人数"
         class="border-b"
