@@ -4,22 +4,25 @@
     <div class="mine-base pu-row">
       <div class="pu-row">
         <div class="pu-column al-start left-info">
-          <span>王大仙</span>
-          <span class="mar-t-10">单位：建阳区童游街道自然资源所</span>
-          <span>管辖范围：南平市建阳区童游街道</span>
+          <span>
+            {{myInfo.name}}
+            <span>{{myInfo.position}}</span>
+          </span>
+          <span class="mar-t-10">单位：{{myInfo.unit}}</span>
+          <span>管辖范围：{{myInfo.range}}</span>
         </div>
         <div class="right-info pu-row">
-          <img width="80" height="80" src="../../assets/imgs/avatar.png" alt="">
+          <img width="80" height="80" :src="myInfo.avatar" alt="">
           <van-icon class="mar-l-10" @click="toDetail" name="arrow" />
         </div>
       </div>
     </div>
     <div>
-      <van-cell class="border-b" title="我的随手拍" is-link value="6" url="/mine/handPic" />
-      <van-cell class="border-b" title="巡查签到" is-link url="/mine/toursignrecord" value="12" />
-      <van-cell class="border-b" title="灾（险）情速报" is-link url="/mine/quickreport" value="31" />
-      <van-cell class="border-b" title="灾（险）情上报" is-link url="/mine/reported" value="23" />
-      <van-cell class="border-b" title="群众随手拍处理" is-link url="/mine/qzHandPic" value="66" />
+      <van-cell class="border-b" title="我的随手拍" is-link :value="num.readily" url="/mine/handPic" />
+      <van-cell class="border-b" title="巡查签到" is-link url="/mine/toursignrecord" :value="num.patrol?num.patrol:0" />
+      <van-cell class="border-b" title="灾（险）情速报" is-link url="/mine/quickreport" :value="num.reporting?num.reporting:0" />
+      <van-cell class="border-b" title="灾（险）情上报" is-link url="/mine/reported" :value="num.schedule?num.schedule:0" />
+      <van-cell class="border-b" title="群众随手拍处理" is-link url="/mine/qzHandPic" :value="num.allreadilye?num.allreadilye:0" />
     </div>
     <div class="partment">
       <span>
@@ -35,7 +38,8 @@ import {getMyIndexAPI} from '../../api/mine'
 export default {
   data() {
     return {
-      myInfo: {}
+      myInfo: {},
+      num:{}
     }
   },
   mounted() {
@@ -43,10 +47,20 @@ export default {
   },
   methods:{
     getMyIndex() {
-      getMyIndexAPI({phone: '123456'})
+      getMyIndexAPI({phone: '123456'}).then(res => {
+        console.log(res)
+        this.myInfo = res.my;
+        this.num = {
+          readily:res.readily,
+          patrol:res.patrol,
+          reporting:res.reporting,
+          schedule:res.schedule,
+          allreadilye:res.allreadilye
+        }
+      })
     },
     toDetail() {
-      this.$router.push({path: '/mine/detail'})
+      this.$router.push({path: '/mine/detail',query:{id:this.myInfo.id}})
     }
   }
 }
@@ -62,16 +76,22 @@ export default {
   .pu-row{
     margin-left: 20px;
     .right-info{
-      margin-left:30px;
+      margin-left:40px;
       img{
         border-radius: @border-radius-max;
       }
     }
   }
 }
+.left-info{
+  width: 55vw;
+}
 .left-info> :first-child{
   font-size: @font-size-xlg;
   font-weight: @font-weight-bold;
+}
+.left-info > span > span{
+  font-size: 13px;
 }
 .van-cell__value{
   font-weight: bold;

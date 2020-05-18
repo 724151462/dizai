@@ -27,10 +27,23 @@ Vue.use(preview, options)
 Vue.component('navBar',navBar)
 Vue.component('bottomTabs',bottomTabs)
 Vue.component('personalHead',personalHead)
-
+import { Dialog } from 'vant';
+Vue.use(Dialog);
 Vue.use(Vant);
-
 Vue.config.productionTip = false
+
+import VideoPlayer from 'vue-video-player'
+require('video.js/dist/video-js.css')
+require('vue-video-player/src/custom-theme.css')
+
+Vue.use(VideoPlayer)
+
+
+
+
+
+
+
 
 new Vue({
   router,

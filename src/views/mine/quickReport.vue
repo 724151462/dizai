@@ -2,11 +2,17 @@
   <div >
     <navBar :title="'灾(险)情速报记录'"></navBar>
     <van-dropdown-menu active-color="#ee0a24">
-        <van-dropdown-item title-class="left" v-model="value1" :options="option1" />
-        <van-dropdown-item title-class="right" v-model="value2" :options="option2" />
+        <van-dropdown-item @change="cheX" title-class="left" v-model="value1" :options="option1" />
+        <van-dropdown-item @change="cheZ" title-class="right" v-model="value2" :options="option2" />
     </van-dropdown-menu>
     
     <div class="record_list">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+        >
         <div 
         class="record" 
         v-for="(item,i) in recordArr" 
@@ -49,28 +55,25 @@
                 <div class="r_time">7月14日 15:20</div>
             </div>
         </div>
-        
+        </van-list>
     </div>
   </div>
 </template>
 
 <script>
+import {getReportingList,cityList} from '../../api/mine'
 export default {
    data() {
     return {
-      value1: 0,
-      value2: 'a',
-      option1: [
-        { text: '光泽县', value: 0 },
-        { text: 'BB县', value: 1 },
-        { text: 'AA县', value: 2 },
-      ],
-      option2: [
-        { text: '全部乡镇', value: 'a' },
-        { text: 'CC镇', value: 'b' },
-        { text: 'DD乡', value: 'c' },
-      ],
-      recordArr:[1,1,1,1,1]
+      value1: '',
+      value2: '',
+      option1: [],
+      option2: [],
+      recordArr:[],
+      loading:false,
+      finished:false,
+      page:1,
+      country:''
 
     };
   },
@@ -78,7 +81,92 @@ export default {
     to(){
         this.$router.push({path: '/mine/quickreportparticulars'});
     },
+    getList(){
+        getReportingList({phone:"1234567",country:this.country,page:this.page}).then(res => {
+        // res.id = id
+        if(res.data.length > 0){
+          this.recordArr.push(...res.data);
+          console.log(res.data);
+          this.page += 1;
+          // 加载状态结束
+          this.loading = false;
+          // 数据全部加载完成
+          if (this.page > res.page.all) {
+            this.finished = true;
+          }
+        }else{
+          this.loading = false;
+          this.finished = true;
+        }
+        
+      })
+    },
+    onLoad() {
+      getReportingList({phone:"1234567",country:this.country,page:this.page}).then(res => {
+        // res.id = id
+        if(res.data.length > 0){
+          this.recordArr.push(...res.data);
+          var arr = [{text:"请选择",value:''}];
+          for(var i=0;i<res.city.county.length;i++){
+              arr.push({
+                  text:res.city.county[i].name,
+                  value:res.city.county[i].name,
+              })
+          }
+          var arr2 = [{text:'请选择',value:''}];
+          for(var j=0;j<res.city.country.length;j++){
+              arr2.push({
+                  text:res.city.country[j].name,
+                  value:res.city.country[j].name,
+              })
+          }
+          console.log(arr,arr2);
+          this.option1 = arr;
+          this.option2 = arr2;
           
+          this.value1 = arr[0].value;
+          this.value2 = arr2[0].value;
+          // console.log(res.data);
+          this.page += 1;
+          // 加载状态结束
+          this.loading = false;
+          // 数据全部加载完成
+          if (this.page > res.page.all) {
+            this.finished = true;
+          }
+        }else{
+          this.loading = false;
+          this.finished = true;
+        }
+        
+      })
+    },
+    cheX(val){
+        // console.log(val);
+        this.page = 1;
+        this.country = val;
+        this.recordArr = [];
+        this.getList();
+        cityList({name:val}).then(res => {
+            console.log(res);
+            
+            var arr2 = [{text:'全部乡镇',value:''}];
+            for(var j=0;j<res.data.length;j++){
+                arr2.push({
+                    text:res.data[j].name,
+                    value:res.data[j].name,
+                })
+            }
+            this.option2 = arr2;
+            this.value2 = arr2[0].value;
+        })
+    },
+    cheZ(val){
+        this.page = 1;
+        this.country = val;
+        this.recordArr = [];
+        this.getList();
+    }
   }
 };
 </script>

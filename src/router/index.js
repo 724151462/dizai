@@ -118,12 +118,6 @@ const routes = [
       import(/* webpackChunkName: "mine" */ "../views/mine/tourSignRecord.vue"),
   },
   {
-    path: "/mine/shangbaorecord",
-    name: "灾险情上报",
-    component: () =>
-      import(/* webpackChunkName: "mine" */ "../views/mine/sbRecord.vue"),
-  },
-  {
     path: '/mine/toursignrecordparticulars',
     name: '巡查详情',
     component: () => import (/* webpackChunkName: "mine" */ '../views/mine/tourSignRecordParticulars.vue')
