@@ -44,6 +44,11 @@
         <span>险情点</span>
       </div>
     </div>
+    <van-overlay :show="locationLoad">
+      <div class="wrapper" @click.stop>
+        <van-loading style="margin-top: 70%" size="24px" vertical>获取定位中...</van-loading>
+      </div>
+    </van-overlay>
     <van-popup
       v-model="pointPop"
       round
@@ -54,7 +59,7 @@
         class="pu-column al-start pad-tb-10 pad-lr-10"
         style="align-items: flex-start;"
       >
-        <h3>光泽县芝麻镇芝麻村43号</h3>
+        <h3>{{pDetail.address}}</h3>
         <div class="img-wrapper pu-row">
           <img
             height="185"
@@ -70,23 +75,23 @@
           style="align-items: flex-start;"
         >
           <div class="mar-tb-5">
-            <span class="f-gray">灾害类型</span><span> 地面塌陷</span
+            <span class="f-gray">灾害类型</span><span> {{pDetail.type}}</span
             ><span class="f-gray" style="margin-left: 50px">灾害规模</span
-            ><span> 3米</span>
+            ><span> {{pDetail.scale}}米</span>
           </div>
           <div class="mar-tb-5">
             <span class="f-gray">防治措施</span
-            ><span> 防护围挡，警告指示牌</span>
+            ><span>{{pDetail.opinion}}</span>
           </div>
           <div class="mar-tb-5">
-            <span class="f-gray">威胁人数</span><span> 20</span>
+            <span class="f-gray">威胁人数</span><span> {{pDetail.household}}人</span>
           </div>
           <div class="mar-tb-5">
-            <span class="f-gray">责任人</span><span> 王某</span>
+            <span class="f-gray">责任人</span><span> {{pDetail.monitor}}</span>
           </div>
-          <div class="mar-tb-5">
+          <!-- <div class="mar-tb-5">
             <span class="f-gray">联系方式</span><span> 18459183928</span>
-          </div>
+          </div> -->
           <div class="mar-tb-5">
             <span class="f-gray">发生时间</span
             ><span> 2020年5月12日 14:00</span>
@@ -101,32 +106,45 @@
 
 <script>
 import AMap from "AMap";
-import {getPointsAPI} from '../../api/index'
+import {getPointsAPI, getPointDetailAPI} from '../../api/index'
 export default {
   data() {
     return {
+      locationLoad: false,
       pointPop: false,
       actIndex: 0,
-      dzPoints: [],
       dzd: [{ id: "", lng: "116.397428", lat: "39.90923" }],
       gdbp: [{ id: "", lng: "116.387428", lat: "39.90923" }],
       yxbj: [{ id: "", lng: "116.377428", lat: "39.90923" }],
       zqd: [{ id: "", lng: "116.367428", lat: "39.90923" }],
       xqd: [{ id: "123", lng: "116.357428", lat: "39.90923" }],
+      pDetail: {}
     };
   },
   mounted() {
     this.initMap();
-    this.getPoints();
   },
   methods: {
     getPoints() {
-      getPointsAPI({city: '松溪县', phone: ''})
+      getPointsAPI({city: '松溪县', phone: '13960928555'})
       .then(res => {
-        console.log(res)
+        this.dzd = res.no_slope
+        this.gdbp = res.slope
+        this.yxbj = res.county
+        this.zqd = res.disaster
+        this.xqd = res.danger
+      })
+    },
+    getDetail(id) {
+      getPointDetailAPI({id: id}).then(res => {
+        // console.log(res)
+        res.id = id
+        this.pDetail = res
       })
     },
     initMap() {
+      this.locationLoad = true
+      let that = this
       window.map = new AMap.Map("map", {
         resizeEnable: true,
         zoom: 11,
@@ -147,13 +165,14 @@ export default {
           zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
           extensions: "all",
         });
-        window.map.addControl(geolocation);
+        // window.map.addControl(geolocation);
         geolocation.getCurrentPosition();
         AMap.event.addListener(geolocation, "complete", onComplete); //返回定位信息
         AMap.event.addListener(geolocation, "error", (err) => {
           console.log(err);
         }); //返回定位出错信息
         function onComplete(data) {
+          that.locationLoad = false
           var lnglatXY = [data.position.getLng(), data.position.getLat()]; //地图上所标点的坐标
           console.log(lnglatXY)
           AMap.service("AMap.Geocoder", function() {
@@ -165,6 +184,7 @@ export default {
                 //获得了有效的地址信息:
                 //即，result.regeocode.formattedAddress
                 console.log(result.regeocode);
+                that.getPoints();
               } else {
                 //获取地址失败
               }
@@ -180,53 +200,14 @@ export default {
       window.map.clearMap();
       switch (idx) {
         case 0:
-          this.dzd.forEach((element) => {
+          // eslint-disable-next-line no-case-declarations
+          let dzd = this.dzd.filter(element => {
+            return element.x_coordinate != '' && element.y_coordinate != ''
+          })
+          dzd.forEach((element) => {
+            console.log(element.x_coordinate, element.y_coordinate)
             var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.lng, element.lat),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-            });
-            window.map.add(marker);
-          });
-          break;
-        case 1:
-          this.gdbp.forEach((element) => {
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.lng, element.lat),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-            });
-            window.map.add(marker);
-          });
-          break;
-        case 2:
-          this.yxbj.forEach((element) => {
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.lng, element.lat),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-            });
-            window.map.add(marker);
-          });
-          break;
-        case 3:
-          this.zqd.forEach((element) => {
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.lng, element.lat),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-            });
-            window.map.add(marker);
-          });
-          break;
-        case 4:
-          this.xqd.forEach((element) => {
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.lng, element.lat),
+              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
               icon:
                 "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
               offset: new AMap.Pixel(-13, -30),
@@ -234,20 +215,122 @@ export default {
                 id: element.id,
               },
             });
+            window.map.add(marker);
+            marker.on("click", (evt) => {
+              let id = evt.target.De.extData.id
+              this.getDetail(id)
+              setTimeout(() => {
+                this.pointPop = true;
+              }, 200);
+            });
+          });
+          break;
+        case 1:
+          // eslint-disable-next-line no-case-declarations
+          let gdbp = this.gdbp.filter(element => {
+            return element.x_coordinate != '' && element.y_coordinate != ''
+          })
+          gdbp.forEach((element) => {
+            console.log(element.x_coordinate, element.y_coordinate)
+            var marker = new AMap.Marker({
+              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
+              icon:
+                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+              offset: new AMap.Pixel(-13, -30),
+              extData: {
+                id: element.id,
+              },
+            });
+            window.map.add(marker);
             marker.on("click", (evt) => {
               console.log(evt.target.De.extData.id);
               setTimeout(() => {
                 this.pointPop = true;
               }, 200);
             });
+          });
+          break;
+        case 2:
+          // eslint-disable-next-line no-case-declarations
+          let yxbj = this.yxbj.filter(element => {
+            return element.x_coordinate != '' && element.y_coordinate != ''
+          })
+          yxbj.forEach((element) => {
+            console.log(element.x_coordinate, element.y_coordinate)
+            var marker = new AMap.Marker({
+              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
+              icon:
+                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+              offset: new AMap.Pixel(-13, -30),
+              extData: {
+                id: element.id,
+              },
+            });
             window.map.add(marker);
+            marker.on("click", (evt) => {
+              console.log(evt.target.De.extData.id);
+              setTimeout(() => {
+                this.pointPop = true;
+              }, 200);
+            });
+          });
+          break;
+        case 3:
+          // eslint-disable-next-line no-case-declarations
+          let zqd = this.zqd.filter(element => {
+            return element.x_coordinate != '' && element.y_coordinate != ''
+          })
+          zqd.forEach((element) => {
+            console.log(element.x_coordinate, element.y_coordinate)
+            var marker = new AMap.Marker({
+              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
+              icon:
+                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+              offset: new AMap.Pixel(-13, -30),
+              extData: {
+                id: element.id,
+              },
+            });
+            window.map.add(marker);
+            marker.on("click", (evt) => {
+              console.log(evt.target.De.extData.id);
+              setTimeout(() => {
+                this.pointPop = true;
+              }, 200);
+            });
+          });
+          break;
+        case 4:
+          // eslint-disable-next-line no-case-declarations
+          let xqd = this.xqd.filter(element => {
+            return element.x_coordinate != '' && element.y_coordinate != ''
+          })
+          xqd.forEach((element) => {
+            console.log(element.x_coordinate, element.y_coordinate)
+            var marker = new AMap.Marker({
+              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
+              icon:
+                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+              offset: new AMap.Pixel(-13, -30),
+              extData: {
+                id: element.id,
+              },
+            });
+            window.map.add(marker);
+            marker.on("click", (evt) => {
+              console.log(evt.target.De.extData.id);
+              setTimeout(() => {
+                this.pointPop = true;
+              }, 200);
+            });
           });
           break;
       }
       window.map.setFitView();
     },
     toDetail() {
-      this.$router.push({path: '/index/zqdetail'})
+      console.log(this.pDetail)
+      this.$router.push({path: '/index/zqdetail',query: {id: this.pDetail.id}})
     }
   },
 };
@@ -274,11 +357,14 @@ export default {
 }
 .hand-upload-btn{
   position: absolute;
-  z-index: 9999;
+  z-index: 11;
   bottom: 160px;
   right: 20px;
   background-color: #fff;
   padding: 10px;
   border-radius: 10px;
+}
+.van-overlay{
+  z-index: 999;
 }
 </style>

@@ -5,7 +5,7 @@
         class="pu-column al-start pad-tb-5 pad-lr-10 bg-white"
         style="align-items: flex-start;"
       >
-        <h3>光泽县芝麻镇芝麻村43号</h3>
+        <h3>{{pDetail.address}}</h3>
         <div class="img-wrapper pu-row">
           <img
             height="185"
@@ -21,22 +21,19 @@
           style="align-items: flex-start;"
         >
           <div class="mar-tb-5">
-            <span class="f-gray">灾害类型</span><span> 地面塌陷</span
+            <span class="f-gray">灾害类型</span><span> {{pDetail.type}}</span
             ><span class="f-gray" style="margin-left: 50px">灾害规模</span
-            ><span> 3米</span>
+            ><span> {{pDetail.scale}}米</span>
           </div>
           <div class="mar-tb-5">
             <span class="f-gray">防治措施</span
-            ><span> 防护围挡，警告指示牌</span>
+            ><span> {{pDetail.opinion}}</span>
           </div>
           <div class="mar-tb-5">
-            <span class="f-gray">威胁人数</span><span> 20</span>
+            <span class="f-gray">威胁人数</span><span> {{pDetail.number}}</span>
           </div>
           <div class="mar-tb-5">
-            <span class="f-gray">责任人</span><span> 王某</span>
-          </div>
-          <div class="mar-tb-5">
-            <span class="f-gray">联系方式</span><span> 18459183928</span>
+            <span class="f-gray">责任人</span><span> {{pDetail.monitor}}</span>
           </div>
           <div class="mar-tb-5">
             <span class="f-gray">发生时间</span
@@ -48,10 +45,26 @@
   </div>
 </template>
 <script>
+import {getPointDetailAPI} from '../../api/index'
 export default {
+  data() {
+    return {
+      pDetail: {}
+    }
+  },
   mounted() {
-    console.log(123)
-  }
+    this.getDetail()
+  },
+  methods: {
+    getDetail() {
+      let id = this.$route.query.id
+      getPointDetailAPI({id: id}).then(res => {
+        // console.log(res)
+        res.id = id
+        this.pDetail = res
+      })
+    },
+  },
 }
 </script>
 

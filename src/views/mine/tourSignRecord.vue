@@ -8,6 +8,7 @@
           :key="index"
           class="pad-lr-10 pad-tb-10 pu-column al-start"
           :class="index != 6 ? 'border-split' : ''"
+          @click="to()"
         >
           <span class="f-22"><b>光泽县芝麻镇芝麻村15号</b></span>
           <span class="mar-tb-10">道路裂开</span>
@@ -50,6 +51,9 @@ export default {
           break;
       }
     },
+    to() {
+      this.$router.push({path: '/mine/toursignrecordparticulars'})
+    }
   },
 };
 </script>

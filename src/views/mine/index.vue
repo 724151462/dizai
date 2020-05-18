@@ -17,8 +17,8 @@
     <div>
       <van-cell class="border-b" title="我的随手拍" is-link value="6" url="/mine/handPic" />
       <van-cell class="border-b" title="巡查签到" is-link url="/mine/toursignrecord" value="12" />
-      <van-cell class="border-b" title="灾（险）情速报" is-link url="/mine/shangbaorecord" value="31" />
-      <van-cell class="border-b" title="灾（险）情上报" is-link value="23" />
+      <van-cell class="border-b" title="灾（险）情速报" is-link url="/mine/quickreport" value="31" />
+      <van-cell class="border-b" title="灾（险）情上报" is-link url="/mine/reported" value="23" />
       <van-cell class="border-b" title="群众随手拍处理" is-link url="/mine/qzHandPic" value="66" />
     </div>
     <div class="partment">
@@ -31,11 +31,20 @@
 </template>
 
 <script>
+import {getMyIndexAPI} from '../../api/mine'
 export default {
+  data() {
+    return {
+      myInfo: {}
+    }
+  },
   mounted() {
+    this.getMyIndex()
   },
   methods:{
-    
+    getMyIndex() {
+      getMyIndexAPI({phone: '123456'})
+    },
     toDetail() {
       this.$router.push({path: '/mine/detail'})
     }
