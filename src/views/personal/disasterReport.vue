@@ -48,31 +48,30 @@
         </li>
       </ul>
     </div>
-    <!-- <van-tabs @click="recordChange"> -->
-        <div class="ctm_list">
-          <van-list
-          v-model="loading[3]"
-          :finished="finished[3]"
-          finished-text="没有更多了"
-          @load="onLoad"
-          :immediate-check='false'
-        >
-            <div @click="to(item.id)"  class="ctm" v-for="(item,i) in arr4" :key="i">
-              <div class="ctm_title">{{item.name}}</div>
-              <div class="ctm_info">
-                  <img :src="item.avatar" alt="">
-                  <span>{{item.username}}</span>
-                  <time>{{timestampToTime(item.happen_time)}}</time>
-                  <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
-                  <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
-                  <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
-                  <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
-                  <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
-                  <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
-              </div>
-            </div>
-          </van-list>
+    <div class="ctm_list">
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+      :immediate-check='false'
+    >
+      <div @click="to(item.id)"  class="ctm" v-for="(item,i) in arr" :key="i">
+        <div class="ctm_title">{{item.name}}</div>
+        <div class="ctm_info">
+          <img :src="item.avatar" alt="">
+          <span>{{item.username}}</span>
+          <time>{{timestampToTime(item.happen_time)}}</time>
+          <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
+          <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
+          <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
+          <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
+          <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
+          <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
         </div>
+      </div>
+    </van-list>
+</div>
   </div>
 </template>
 <script>
@@ -82,14 +81,11 @@ export default {
     return{
       myInfo: {},
       num:{},
-      type:'已上报',
-      page:[1,1,1,1],
-      finished:[false,false,false,false,],
-      loading:[false,false,false,false],
+      type:'all',
+      page:1,
+      finished:false,
+      loading:false,
       arr:[],
-      arr2:[],
-      arr3:[],
-      arr4:[],
     }
   },
   mounted() {
@@ -159,16 +155,10 @@ export default {
     onLoad() {
       var num = null;
       // 异步更新数据
-      if(this.type == '已上报') num = 0;
-      if(this.type == '已办结') num = 1;
-      if(this.type == '已列入') num = 2;
       if(this.type == 'all') num = 3;
       getScheduleList({phone:"123456",type:this.type,page:this.page[num]}).then(res => {
         // res.id = id
         if(res.data.length > 0){
-          if(this.type == '已上报') this.arr.push(...res.data);
-          if(this.type == '已办结') this.arr2.push(...res.data);
-          if(this.type == '已列入') this.arr3.push(...res.data);
           if(this.type == 'all') this.arr4.push(...res.data);
           // console.log(res.data);
           this.page[num] += 1;
