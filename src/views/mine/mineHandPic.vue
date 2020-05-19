@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'我的随手拍'"></navBar>
+    <!-- <navBar :title="'我的随手拍'"></navBar> -->
     <van-list
       v-model="loading"
       :finished="finished"
@@ -15,6 +15,7 @@
         <span class="f-22"><b>{{item.name}}</b></span>
         <span class="mar-tb-10">{{item.content}}</span>
         <div class="img-wrapper pu-row">
+          <templat v-if="item.image.length != 0" class="xxx">
           <img
             class="mar-r-5"
             v-for="(pic, index) in item.image"
@@ -23,6 +24,9 @@
             :preview="index" preview-text="描述文字"
             alt=""
           />
+        </templat>
+        <van-empty v-else description="暂无图片" />
+          
         </div>
         <div class="mar-t-10 pu-row pu-row-sb" style="width: 100%">
           <span class="f-gray">{{timestampToTime(item.uptime)}}</span>
@@ -47,7 +51,7 @@ export default {
   methods:{
     onLoad() {
       // 异步更新数据
-      getMyReadilyList({phone:"123456",type:"",page:this.page}).then(res => {
+      getMyReadilyList({phone:this.userinfo ,type:"",page:this.page}).then(res => {
         console.log(res)
         // res.id = id
         if(res.data.length >= 1){
@@ -99,16 +103,25 @@ export default {
       var s = date.getSeconds();
       return Y + M + D + h + m + s;
     }
+  },
+  mounted(){
+    this.nav('我的随手拍');
+    this.userinfo = this.localData('get','userinfo');
   }
+  
 }
 </script>
 
 <style lang="less" scope>
 .img-wrapper{
-  overflow-x: auto;
+  overflow-x: scroll;
+  .xxx{
+    display: flex;
+  flex-direction:  row ;
+}
   img{
     height: 100px;
-    width: 100px;
+    width: auto;
   }
 }
 .no-more{

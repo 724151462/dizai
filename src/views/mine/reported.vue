@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'灾(险)情上报记录'"></navBar>
+    <!-- <navBar :title="'灾(险)情上报记录'"></navBar> -->
     <van-tabs @click="recordChange">
       <van-tab title="上报">
         <div class="ctm_list">
@@ -56,7 +56,6 @@
           </div>
       </van-tab>
       <van-tab title="列入">
-        <div  v-for="(item,i) in arr[2]" :key="i">{{i}}</div>
         <div class="ctm_list">
           <van-list
           v-model="loading[2]"
@@ -130,6 +129,8 @@ export default {
     }
   },
   mounted(){
+    this.nav('灾(险)情上报记录');
+    this.userinfo = this.localData('get','userinfo');
     this.onLoad();
   },
   methods: {
@@ -185,7 +186,7 @@ export default {
       if(this.type == '已办结') num = 1;
       if(this.type == '已列入') num = 2;
       if(this.type == 'all') num = 3;
-      getScheduleList({phone:"123456",type:this.type,page:this.page[num]}).then(res => {
+      getScheduleList({phone:this.userinfo ,type:this.type,page:this.page[num]}).then(res => {
         // res.id = id
         if(res.data.length > 0){
           if(this.type == '已上报') this.arr.push(...res.data);

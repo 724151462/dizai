@@ -1,6 +1,6 @@
 <template>
   <div >
-    <navBar :title="'灾(险)情速报记录'"></navBar>
+    <!-- <navBar :title="'灾(险)情速报记录'"></navBar> -->
     <van-dropdown-menu active-color="#ee0a24">
         <van-dropdown-item @change="cheX" title-class="left" v-model="value1" :options="option1" />
         <van-dropdown-item @change="cheZ" title-class="right" v-model="value2" :options="option2" />
@@ -17,42 +17,42 @@
         class="record" 
         v-for="(item,i) in recordArr" 
         :key="i"
-        @click="to()"
+        @click="to(item.id)"
         >
-            <div class="r_title">2020年第三轮降雨(7月1日-9月31日)</div>
+            <div class="r_title">{{item.name}}</div>
             <div>
                 <div class="amount">
                     <span class="amount_text">灾情数量</span>
-                    <span class="amount_num">12处</span>
+                    <span class="amount_num">{{item.disaster_number}}处</span>
                 </div>
                 <div class="amount">
                     <span class="amount_text">险情数量</span>
-                    <span class="amount_num">9处</span>
+                    <span class="amount_num">{{item.danger_number}}处</span>
                 </div>
                 <div class="amount">
                     <span class="amount_text">转移人数</span>
-                    <span class="amount_num">1204人</span>
+                    <span class="amount_num">{{item.move_people}}人</span>
                 </div>
                 <div class="amount">
                     <span class="amount_text">巡查地灾点</span>
-                    <span class="amount_num">1524次</span>
+                    <span class="amount_num">{{item.geologic_hazard_number}}次</span>
                 </div>
                 <div class="amount">
                     <span class="amount_text">巡查高陡边坡</span>
-                    <span class="amount_num">154次</span>
+                    <span class="amount_num">{{item.steep_number}}次</span>
                 </div>
                 <div class="amount">
                     <span class="amount_text">巡查人次</span>
-                    <span class="amount_num">584次</span>
+                    <span class="amount_num">{{item.patrol_number}}次</span>
                 </div>
                 <div class="amount" style="width:100%;">
-                    <span class="amount_text">触动应急技术人员人次</span>
-                    <span class="amount_num">201人</span>
+                    <span class="amount_text">出动应急技术人员人次</span>
+                    <span class="amount_num">{{item.dispatch_number}}人</span>
                 </div>
             </div>
             <div class="r_beizhu">
-                <div class="r_text"><span><van-icon name="location-o" /></span> 光泽县止马镇</div>
-                <div class="r_time">7月14日 15:20</div>
+                <div class="r_text"><span><van-icon name="location-o" /></span> {{item.address}}</div>
+                <div class="r_time">{{timestampToTime(item.start_time)}}</div>
             </div>
         </div>
         </van-list>
@@ -73,16 +73,17 @@ export default {
       loading:false,
       finished:false,
       page:1,
-      country:''
+      country:'',
+      county:''
 
     };
   },
   methods:{
-    to(){
-        this.$router.push({path: '/mine/quickreportparticulars'});
+    to(id){
+        this.$router.push({path: '/mine/quickreportparticulars',query:{id:id}});
     },
     getList(){
-        getReportingList({phone:"1234567",country:this.country,page:this.page}).then(res => {
+        getReportingList({phone:this.userinfo ,country:this.country,county:this.county,page:this.page}).then(res => {
         // res.id = id
         if(res.data.length > 0){
           this.recordArr.push(...res.data);
@@ -102,9 +103,10 @@ export default {
       })
     },
     onLoad() {
-      getReportingList({phone:"1234567",country:this.country,page:this.page}).then(res => {
+      getReportingList({phone:this.userinfo ,country:this.country,county:this.county,page:this.page}).then(res => {
         // res.id = id
         if(res.data.length > 0){
+            console.log(res.data);
           this.recordArr.push(...res.data);
           var arr = [{text:"请选择",value:''}];
           for(var i=0;i<res.city.county.length;i++){
@@ -144,7 +146,8 @@ export default {
     cheX(val){
         // console.log(val);
         this.page = 1;
-        this.country = val;
+        this.country = '';
+        this.county = val;
         this.recordArr = [];
         this.getList();
         cityList({name:val}).then(res => {
@@ -166,7 +169,21 @@ export default {
         this.country = val;
         this.recordArr = [];
         this.getList();
+    },
+    timestampToTime(timestamp) {
+      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '年';
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
+      var D = date.getDate() + '日 ';
+      var h = date.getHours() + ':';
+      var m = date.getMinutes() + ':';
+      var s = date.getSeconds();
+      return Y + M + D + h + m + s;
     }
+  },
+  mounted(){
+      this.nav('灾(险)情速报记录');
+    this.userinfo = this.localData('get','userinfo');
   }
 };
 </script>

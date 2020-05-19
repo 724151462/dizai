@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'灾（险）情上报'"></navBar>
+    <!-- <navBar :title="'灾（险）情上报'"></navBar> -->
     <van-form @submit="onSubmit">
       <van-field
         v-model="zqNam"
@@ -65,19 +65,18 @@
       />
       <van-field
         v-model="yingjiNum"
-        readonly
         label="出动应急技术人员人次"
         placeholder="请输入出动应急技术人员人次"
         class="border-b"
       />
       <van-field name="picUploader" multiple :max-count="3" label="文件上传">
         <template #input>
-          <van-uploader v-model="picUploader" />
+          <van-uploader v-model="picUploader"  :max-count="5"/>
         </template>
       </van-field>
       <van-field name="vdoUploader" multiple :max-count="3" label="视频上传">
         <template #input>
-          <van-uploader v-model="vdoUploader" />
+          <van-uploader v-model="vdoUploader" capture="camcorder" accept="video/*" :max-count="3" :max-size="3 * 1024 * 1024"  />
         </template>
       </van-field>
     </van-form>
@@ -155,6 +154,9 @@ export default {
       this.hanppenTime = time
       this.showTimePicker = false
     }
+  },
+  mounted(){
+    this.nav('灾（险）情上报');
   }
 }
 </script>

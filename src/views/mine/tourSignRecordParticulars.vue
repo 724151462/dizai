@@ -1,99 +1,102 @@
 <template>
   <div >
-    <navBar :title="'巡查详情'"></navBar>
+    <!-- <navBar :title="'巡查详情'"></navBar> -->
     <div>
         <div class="p_title">
-            光泽县芝麻镇芝麻村15号
+            {{log[0].name}}
         </div>
         <div class="p_img img-wrapper pu-row">
-            <img
-                class="mar-r-5"
-                v-for="(pic, index) in 7"
-                src="../../assets/imgs/bad-bg.png"
+             <templat v-if="info.image.length != 0" class="xxx">
+                 <img
+                class="mar-r-5 aaaa"
+                v-for="(pic, index) in info.image"
+                :src="pic"
                 :key="index"
                 :preview="index"
                 preview-text="描述文字"
                 alt=""
             />
+                </templat>
+         <van-empty v-else description="暂无图片" />
+           
+           
         </div>
     </div>
     <div class="cell_group">
         <div class="cell_group_line">
             <div class="line_title">灾害类型</div>
-            <div class="line_text">滑坡</div>
+            <div class="line_text">{{info.type}}</div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">灾害规模</div>
-            <div class="line_text">3m<sup>3</sup></div>
+            <div class="line_text">{{info.scale}}m<sup>3</sup></div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">是否处理</div>
-            <div class="line_text">已处理反馈</div>
+            <div class="line_text">{{info.is_handle}}</div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">监测人</div>
             <div class="line_text">
-                <span>陈某某</span>
-                 / 
-                <span>13799999999</span>
+                <span>{{info.monitor}}</span>
             </div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">发生地点</div>
             <div class="line_text">
-                <span>光泽县止马镇马村15号</span>
+                <span>{{info.address}}</span>
             </div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">发生时间</div>
-            <div class="line_text">2020年4月13日 15:54</div>
+            <div class="line_text">{{timestampToTime(info.happen_time)}}</div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">防治措施</div>
-            <div class="line_text">防护围挡、警告指示牌</div>
+            <div class="line_text">{{info.opinion}}</div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">威胁户数</div>
-            <div class="line_text">19户</div>
+            <div class="line_text">{{info.household}}户</div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">威胁人数</div>
-            <div class="line_text">62人</div>
+            <div class="line_text">{{info.number}}人</div>
         </div>
-        <div class="cell_group_line">
+        <!-- <div class="cell_group_line">
             <div class="line_title">威胁财产</div>
             <div class="line_text">10万元</div>
-        </div>
+        </div> -->
         <div class="cell_group_line">
             <div class="line_title">责任人</div>
             <div class="line_text">
-                王某某
+                {{log[0].username}}
                  / 
-                <span>13788888888</span>
+                <span>{{log[0].mobile}}</span>
             </div>
         </div>
     </div>
     <div class="henxian"></div>
     <div class="query_log">
         <div class="query_log_title">查询记录</div>
-        <van-steps active-color="red" direction="vertical" :active="0">
-            <van-step v-for="(item,i) in 3" :key="i">
+        <van-steps active-color="red" direction="vertical" :active="log.length">
+            <van-step v-for="(item,i) in log" :key="i">
                 <div class="p_steps_top">
-                    <div class="top_time">2月10号 15:21</div>
-                    <div class="top_text">陈某某 <span><van-icon name="location-o" /></span></div>
+                    <div class="top_time">{{timestampToTime(item.create_time)}}</div>
+                    <div class="top_text">{{item.username}} <span><van-icon name="location-o" /></span></div>
                 </div>
                 <div class="p_steps_imgs">
                     <img
                         class="p_steps_img"
-                        v-for="(pic, index) in 3"
-                        src="../../assets/imgs/bad-bg.png"
+                        v-for="(pic, index) in item.image"
+                        :src="pic"
                         :key="index"
                         :preview="index"
                         preview-text="描述文字"
                         alt=""
                     />
                 </div>
-                <p class="p_steps_bottom">有变形</p>
+                <p class="p_steps_bottom">{{item.content}}</p>
             </van-step>
         </van-steps>
     </div>
@@ -102,10 +105,39 @@
 </template>
 
 <script>
+import {patrolInfo} from '../../api/mine'
 export default {
+    data(){
+        return {
+            info:{},
+            log:[]
+        }
+    },
   methods: {
-    
+    getInfo(id){
+        patrolInfo({id:id}).then(res => {
+            console.log(res)
+            this.info = res.data;
+            this.log = res.log;
+        })
+    },
+    timestampToTime(timestamp) {
+      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '年';
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
+      var D = date.getDate() + '日 ';
+      var h = date.getHours() + ':';
+      var m = date.getMinutes() + ':';
+      var s = date.getSeconds();
+      return Y + M + D + h + m + s;
+    }
   },
+  mounted(){
+      this.nav('巡查详情');
+      this.userinfo = this.localData('get','userinfo');
+      var id = this.$route.query.id;
+      this.getInfo(id)
+  }
 };
 </script>
 
@@ -120,6 +152,11 @@ export default {
     box-sizing: border-box;
     padding:0 20px ;
     margin-bottom: 50px;
+    
+}
+.xxx{
+    display: flex;
+  flex-direction:  row ;
 }
 .p_img img{
     border-radius: 10px;
@@ -196,5 +233,8 @@ export default {
 }
 .top_text span{
     color: red;
+}
+.aaaa{
+    height: 150px;
 }
 </style>

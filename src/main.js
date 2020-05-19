@@ -7,7 +7,23 @@ import 'vant/lib/index.less';
 import './assets/css/public.css';
 import navBar from './components/navBar.vue'
 import bottomTabs from './components/bottomTabs.vue'
-
+import {localData, sessionData} from "../src/assets/js/data.js"
+Vue.prototype.localData = localData;
+Vue.prototype.sessionData = sessionData;
+Vue.prototype.nav = function(name){
+  if(typeof(android) !== "undefined"){
+    // eslint-disable-next-line no-undef
+    android.setTitle(name)
+    // 安卓
+  }else if(typeof(innoPlus) !== "undefined"){
+    // 苹果
+    // eslint-disable-next-line no-undef
+    innoPlus.native.setTitle(name)
+  }
+}
+import {getCookie, setCookie} from "../src/assets/js/cookie.js"
+Vue.prototype.getCookie = getCookie;
+Vue.prototype.setCookie = setCookie;
 let options = {
   fullscreenEl: true, //控制是否显示右上角全屏按钮
   closeEl: false, //控制是否显示右上角关闭按钮

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'地灾随手拍-上传'"></navBar>
+    <!-- <navBar :title="'地灾随手拍-上传'"></navBar> -->
     <van-form @submit="onSubmit">
       <van-field
         v-model="yhPoint"
@@ -73,6 +73,9 @@ export default {
       vdoUploader: [],
       upSussMod: false
     }
+  },
+  mounted(){
+    this.nav('地灾随手拍-上传');
   }
 };
 </script>

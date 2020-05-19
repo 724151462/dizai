@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'群众随手拍处理'"></navBar>
+    <!-- <navBar :title="'群众随手拍处理'"></navBar> -->
     <van-tabs @click="qzHandChange">
       <van-tab title="未处理">
         <van-list
@@ -18,7 +18,8 @@
           <span class="f-22"><b>{{item.name}}</b></span>
           <span class="mar-tb-10">{{item.content}}</span>
           <div class="img-wrapper pu-row">
-            <img
+            <templat v-if="item.image.length != 0" class="xxx">
+         <img
               class="mar-r-5"
               v-for="(pic, index) in item.image"
               :src="pic"
@@ -27,6 +28,9 @@
               preview-text="描述文字"
               alt=""
             />
+        </templat>
+        <van-empty v-else description="暂无图片" />
+            
           </div>
           <div class="mar-t-10 pu-row pu-row-sb" style="width:100%">
             <div class="pu-row">
@@ -58,7 +62,8 @@
           <span class="f-22"><b>{{item.name}}</b></span>
           <span class="mar-tb-10">{{item.content}}</span>
           <div class="img-wrapper pu-row">
-            <img
+             <templat v-if="item.image.length != 0" class="xxx">
+              <img
               class="mar-r-5"
               v-for="(pic, index) in item.image"
               :src="pic"
@@ -67,6 +72,9 @@
               preview-text="描述文字"
               alt=""
             />
+            </templat>
+            <van-empty v-else description="暂无图片" />
+            
           </div>
           <div class="mar-t-10 pu-row pu-row-sb" style="width:100%">
             <div class="pu-row">
@@ -102,7 +110,8 @@ export default {
     }
   },
   mounted() {
-    
+    this.nav('群众随手拍处理');
+    this.userinfo = this.localData('get','userinfo');
   },
   methods:{
     qzHandChange(name, title) {
@@ -125,7 +134,7 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      getMyReadilyList({phone:"123456",type:this.type,page:this.page}).then(res => {
+      getMyReadilyList({phone:this.userinfo ,type:this.type,page:this.page}).then(res => {
         console.log(res)
         // res.id = id
         if(res.data.length >= 1){
@@ -142,7 +151,7 @@ export default {
     },
     onLoad2() {
       // 异步更新数据
-      getMyReadilyList({phone:"123456",type:this.type,page:this.page2}).then(res => {
+      getMyReadilyList({phone:this.userinfo ,type:this.type,page:this.page2}).then(res => {
         console.log(res)
         // res.id = id
         if(res.data.length >= 1){
@@ -222,9 +231,14 @@ export default {
 
 <style lang="less">
 .img-wrapper{
+  .xxx{
+    display: flex;
+  flex-direction:  row ;
+}
   img{
     height: 100px;
-    width: 100px;
+    width: auto;
   }
 }
+
 </style>

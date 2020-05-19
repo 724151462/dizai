@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'个人信息'"></navBar>
+    <!-- <navBar :title="'个人信息'"></navBar> -->
     <div>
       <van-cell center class="border-b" title="头像" is-link>
         <!-- 使用 right-icon 插槽来自定义右侧图标 -->
@@ -30,6 +30,8 @@ export default {
     }
   },
   mounted() {
+    this.nav('个人信息');
+    this.userinfo = this.localData('get','userinfo');
     var id = this.$route.query.id;
     this.getMyIndex(id)
   },

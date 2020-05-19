@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'随手拍'" :isBack="false"></navBar>
+    <!-- <navBar :title="'随手拍'" :isBack="false"></navBar> -->
     <div v-for="(item,index) in handList" :key="index" class="pad-lr-10 pad-tb-10 pu-column al-start" :class="index !=6 ? 'border-split' : ''">
       <span class="f-22"><b>{{item.name}}</b></span>
       <span class="mar-tb-10">{{item.content}}</span>
@@ -34,10 +34,13 @@ import {getHandListAPI} from '../../api/handPic'
 export default {
   data() {
     return {
-      handList: []
+      handList: [],
+      page:1,
     }
   },
   mounted() {
+    this.nav('随手拍');
+    this.userinfo = this.localData('get','userinfo');
     this.getHandList()
   },
   methods:{
@@ -45,11 +48,7 @@ export default {
       return new Date(time*1000).getHours() +':'+ new Date(time*1000).getMinutes()
     },
     getHandList(){
-      getHandListAPI({
-        "phone" : "123456",
-        "type": "''",
-        "page": 1
-      }).then(res => {
+      getHandListAPI({phone:this.userinfo ,type:'all',page:this.page}).then(res => {
         this.handList = res.data
         console.log(this.handList)
       })

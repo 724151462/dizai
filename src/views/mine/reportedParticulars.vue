@@ -1,6 +1,6 @@
 <template>
   <div style="background-color: #f2f3f5;">
-    <navBar :title="'灾(险)情上报记录详情'"></navBar>
+    <!-- <navBar :title="'灾(险)情上报记录详情'"></navBar> -->
     <div class="cell_group">
         <div class="cell_group_line">
             <div class="line_title line_title2">灾险情名称</div>
@@ -48,39 +48,40 @@
     </div>
     <div class="query_log">
         <div class="query_log_title">现场照片</div>
-        <div class="query_log_img">
+        <div class="query_log_img" v-if="info.image.length > 0">
             <img 
-        v-for="(item,i) in imgArr" :key="i"
+        v-for="(item,i) in info.image" :key="i"
                 :preview="i"
                 preview-text="描述文字"
         src="../../assets/imgs/bad-bg.png" 
         alt="">
-        </div>
-    </div>
-     <div class="query_log" v-if='info.video'>
-        <div class="query_log_title">现场视频</div>
-        <!-- <van-cell is-link >展示弹出层</van-cell> -->
 
-        <div class="query_log_img" >
-            <div class="video_img">
+         
+        </div>
+           <van-empty v-else description="暂无图片" />
+    </div>
+     <div class="query_log" >
+        <div class="query_log_title">现场视频</div>
+        <div class="query_log_img" v-if="info.video1.length > 0" >
+            <div 
+            :key="i"  v-for="(item,i) in info.video1"
+              class="video_img" 
+            @click="showPopup(item)">
                 <div></div>
                 <img 
-                v-for="(item,i) in 1" 
-                :key="i" @click="showPopup"
                 src="../../assets/imgs/bad-bg.png" 
                 alt="">
             </div>
-            
-            
         </div>
+        <van-empty v-else description="暂无视频" />
     </div>
     <div class="query_log">
         <div class="query_log_title">处理记录</div>
-        <div class="query_log_jilu">
-            <van-steps direction="vertical" :active="jiluArr.length">
-                <van-step v-for="(item,i) in jiluArr" :key="i">
-                    <div class="q_time" :style="i==jiluArr.length-1?'color:#000;':''">{{timestampToTime(item.open_time)}}</div>
-                    <div class="q_name" :style="i==jiluArr.length-1?'color:#000;':''">{{item.handler}}</div>
+        <div class="query_log_jilu" v-if="log.length > 0">
+            <van-steps direction="vertical" :active="log.length">
+                <van-step v-for="(item,i) in log" :key="i">
+                    <div class="q_time" :style="i==log.length-1?'color:#000;':''">{{timestampToTime(item.open_time)}}</div>
+                    <div class="q_name" :style="i==log.length-1?'color:#000;':''">{{item.handler}}</div>
                     <div v-if="item.new_status=='已上报'" class="q_type ysb2">{{item.new_status}}</div>
                     <div v-if="item.new_status=='未通过'" class="q_type ysb2">{{item.new_status}}</div>
                     <div v-if="item.new_status=='已删除'" class="q_type cxbj2">{{item.new_status}}</div>
@@ -92,6 +93,7 @@
                 </van-step>
             </van-steps>
         </div>
+        <van-empty v-else description="暂无记录" />
     </div>
     <van-popup v-model="show"> 
         <div class="videoshow">
@@ -102,19 +104,60 @@
             ></video-player>
         </div>
     </van-popup>
-    
+    <br>
+    <van-field 
+    label-class="redColor" 
+    v-model="why" 
+    label="原因" 
+    placeholder="(未通过、撤销、删除 必填)"/>
+    <br>
+    <!-- 处置意见  指导一线处置/技术人员现场处置/出具调查报告/函告属地政府 -->
+    <van-field
+    v-if="user == '区县级人员' && info.status == '已上报'"
+    readonly
+    clickable
+    label="处置意见"
+    :value="value"
+    placeholder="(办结必选)请选择处置意见"
+    @click="showPicker = true"
+    :is-link="true"
+    label-class="redColor"
+    />
+        
+        <van-popup v-model="showPicker" round position="bottom">
+        <van-picker
+            title="处置意见" 
+            show-toolbar
+            :columns="columns"
+            @cancel="showPicker = false"
+            @confirm="onConfirm"
+        />
+    </van-popup>
     <div class="typeButton">
-        <template v-if="info.status == '已办结'">
-            <van-button @click="cancellation" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消办结</van-button>
-            <van-button @click="includeList" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">列入</van-button>
+        <template v-if="user == '区市级人员' && info.status == '已上报'">
+            <van-button @click="unsubscribe" round type="info" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">删除上报</van-button>
+            <van-button @click="includeList" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">列入系统</van-button>
         </template>
-        <template v-if="info.status == '已上报'">
-            <van-button round type="info" @click="unsubscribe" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消上报</van-button>
-            <van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">编辑</van-button>
-            <van-button round type="info" @click="notPass" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">驳回</van-button>
-            <van-button round type="info" @click="finish" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">办结</van-button>
+        <br>
+        <template v-if="info.personnel == userinfo && info.status == '已上报'">
+            <van-row gutter="20">
+                <van-col span="12"><van-button round type="info" @click="unsubscribe" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">撤销上报</van-button></van-col>
+                <van-col span="12"><van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">修改上报</van-button></van-col>
+            </van-row>
         </template>
-        <van-button v-else-if="info.status == '已列入'" @click="delist" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消列入</van-button>
+        <br>
+        <template v-if="user == '区县级人员' && info.status == '已上报'">
+            <van-row gutter="20">
+                <van-col span="12"><van-button round type="info" @click="notPass" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">未通过</van-button></van-col>
+                <van-col span="12"><van-button round type="info" @click="finish" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">办结</van-button></van-col>    
+            </van-row>
+        </template>
+        <template v-if="user == '区县级人员' && info.status == '已办结'">
+            <van-button @click="cancellation" round type="info" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">撤销办结</van-button>
+            <van-button @click="includeList" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">列入系统</van-button>
+        </template>
+
+        <van-button v-if="(user == '区县级人员' ||  user == '区市级人员')&& info.status == '已列入'" @click="delist" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消列入</van-button>
     </div>
   </div>
 </template>
@@ -133,8 +176,7 @@ export default {
     data(){
         return {
             info:{},
-            imgArr:[1,1,1],
-            jiluArr:[],
+            log:[],
             // 视频播放
             playerOptions : {
                 playbackRates: [0.7, 1.0, 1.5, 2.0], //播放速度
@@ -161,41 +203,95 @@ export default {
                 }
             },
             show: false,
+            value: '',
+            showPicker: false,
+            columns: [
+                {
+                    text:'指导一线处置',
+                    children:[]
+                },{
+                    text: '技术人员现场处置',
+                    children:['1人','2人','3人','4人','5人','6人','7人','8人','9人','10人']
+                },{
+                    text:'出具调查报告',
+                    children:[]
+                },{
+                    text:'函告属地政府',
+                    children:[]
+                }
+            ],
+            why:''
         }
     },
     methods: {
+        onConfirm(value) {
+            console.log(value);
+            if(value[0] == '技术人员现场处置'){
+                this.value = value[0] + value[1];
+            }else{
+                this.value = value[0] ;
+            }
+            this.showPicker = false;
+        },
         // 驳回
         notPass() {
-            operatenotPassAPI({id: this.$route.query.id, phone: "''"})
+            operatenotPassAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
+                console.log(res)
+                // if(res.status == 'fail')this.$toast.fail(res.msg);
+                // if(res.status == "success")this.$toast.success(res.msg);
+            })
         },
         // 办结
         finish() {
-            operateFinishAPI({id: this.$route.query.id, phone: "''"})
+            operateFinishAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
+                console.log(res)
+                if(res.status == 'fail')this.$toast.fail(res.msg);
+                if(res.status == "success")this.$toast.success(res.msg);
+            })
         },
         // 列入
         includeList() {
-            operateIncludeListAPI({id: this.$route.query.id, phone: "''"})
+            operateIncludeListAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
+                console.log(res)
+                if(res.status == 'fail')this.$toast.fail(res.msg);
+                if(res.status == "success")this.$toast.success(res.msg);
+            })
         },
         // 取消列入
         delist() {
-            operateDelistAPI({id: this.$route.query.id, phone: "''"})
+            operateDelistAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
+                console.log(res)
+                if(res.status == 'fail')this.$toast.fail(res.msg);
+                if(res.status == "success")this.$toast.success(res.msg);
+            })
         },
         // 撤销上报
         unsubscribe() {
-            operateUnsubscribeAPI({id: this.$route.query.id, phone: "''"})
+            operateUnsubscribeAPI({id: this.$route.query.id, phone: this.userinfo,}).then(res => {
+                console.log(res)
+                if(res.status == 'fail')this.$toast.fail(res.msg);
+                if(res.status == "success")this.$toast.success(res.msg);
+
+            })
         },
         // 撤销办结
         cancellation() {
-            operateCancellationAPI({id: this.$route.query.id, phone: "''"})
+            operateCancellationAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
+                console.log(res)
+                if(res.status == 'fail')this.$toast.fail(res.msg);
+                if(res.status == "success")this.$toast.success(res.msg);
+            })
         },
-        showPopup() {
+        showPopup(url) {
             this.show = true;
+            this.playerOptions.sources[0].src = url;
         },
         getInfo(id){
             getScheduleInfo({id:id}).then(res => {
                 console.log(res)
                 this.info = res.data;
-                this.jiluArr = res.log;
+                this.log = res.log;
+                this.user = res.user;
             })
         },
         timestampToTime(timestamp) {
@@ -210,6 +306,8 @@ export default {
         }
     },
     mounted(){
+        this.nav('灾(险)情上报记录详情');
+        this.userinfo = this.localData('get','userinfo');
         var id = this.$route.query.id;
         this.getInfo(id)
     },
@@ -224,6 +322,7 @@ export default {
 }
 .video_img{
     position: relative;
+    display: inline-block;
 }
 .video_img div{
     position: absolute;
@@ -235,7 +334,7 @@ export default {
     background-size: 100% 100%;
 }
 .typeButton{
-    width: 60%;
+    width: 90%;
     margin: 0 auto;
     padding: 40px 0;
 }
@@ -351,5 +450,14 @@ export default {
     margin-left: 20px;
     margin-top: 5px;
     padding:1px 5px;
+}
+.alinput{
+    border:none;
+    width: 100%;
+    border-bottom:1px solid #aaaaaa;
+    margin-top: 10px;
+}
+.redColor{
+    color: rgb(243, 60, 60) !important;
 }
 </style>

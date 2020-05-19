@@ -1,6 +1,6 @@
 <template>
   <div class="pu-bg">
-    <navBar :title="'巡查'" :isBack="false"></navBar>
+    <!-- <navBar :title="'巡查'" :isBack="false"></navBar> -->
     <div class="pad-lr-10 mar-t-10 pad-t-10 ">
       <router-link :to="{path: '/tour/sign'}" class="tour-menu pu-row mar-t-10">
         <img width="82" src="../../assets/imgs/qd.png" alt="">
@@ -21,7 +21,9 @@
 
 <script>
 export default {
-
+  mounted(){
+    this.nav('巡查');
+  }
 }
 </script>
 

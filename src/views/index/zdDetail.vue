@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'灾点详情'"></navBar>
+    <!-- <navBar :title="'灾点详情'"></navBar> -->
     <div
         class="pu-column al-start pad-tb-5 pad-lr-10 bg-white"
         style="align-items: flex-start;"
@@ -53,6 +53,7 @@ export default {
     }
   },
   mounted() {
+    this.nav('灾点详情');
     this.getDetail()
   },
   methods: {

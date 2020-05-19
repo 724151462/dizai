@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'巡查签到'"></navBar>
+    <!-- <navBar :title="'巡查签到'"></navBar> -->
     <van-form @submit="onSubmit">
       <van-field
         readonly
@@ -102,6 +102,9 @@ export default {
       this.detailValue = value;
       this.showDetailPicker = false;
     },
+  },
+  mounted(){
+    this.nav('巡查签到');
   }
 }
 </script>

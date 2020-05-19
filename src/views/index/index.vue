@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 <template>
   <div>
     <navBar :title="'首页'" :isBack="false"></navBar>
@@ -122,11 +123,36 @@ export default {
     };
   },
   mounted() {
+    // this.nav('首页');
+    
+    // 1 - 先从localstorage中获取用户信息
+
+    //   有数据
+
+    //   没数据
+
+    //     打开登录
+
+
+    // var infoCookie = this.getCookie('userinfo');
+    // if(!infoCookie){
+    //   var infoLocal = this.localData('get','userinfo');
+    //   if(!infoLocal){
+    //     location.href="http://auth-ser.zsnanping.com/oauth/authorize?client_id=1e0bd883d84f456ca0043b6b19a392ce&response_type=code&grant_type=authorization_code&scope=snsapi_userinfo&redirect_uri=http://npdzzh.3dy.me/manage/public/index/index/callback";
+    //     return ;
+    //   }else{
+    //     this.localData('set','userinfo',this.getCookie('userinfo'));
+    //   }
+    // }else{
+    //   this.localData('set','userinfo',this.getCookie('userinfo'));
+    // }
+    
+    this.localData('set','userinfo','123456');
     this.initMap();
   },
   methods: {
     getPoints() {
-      getPointsAPI({city: '松溪县', phone: '13960928555'})
+      getPointsAPI({city: '松溪县', phone: this.userinfo})
       .then(res => {
         this.dzd = res.no_slope
         this.gdbp = res.slope
@@ -172,6 +198,7 @@ export default {
           console.log(err);
         }); //返回定位出错信息
         function onComplete(data) {
+          console.log(66666);
           that.locationLoad = false
           var lnglatXY = [data.position.getLng(), data.position.getLat()]; //地图上所标点的坐标
           console.log(lnglatXY)
@@ -331,6 +358,9 @@ export default {
     toDetail() {
       console.log(this.pDetail)
       this.$router.push({path: '/index/zqdetail',query: {id: this.pDetail.id}})
+    },
+    reg(){
+
     }
   },
 };

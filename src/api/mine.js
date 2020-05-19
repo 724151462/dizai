@@ -1,5 +1,5 @@
 import {get} from './config'
-const URL = `http://npdzzh.3dy.me/`;
+const URL = `https://npdzzh.3dy.me/manage/public/`;
 export const getMyIndexAPI = function (data) {
   return get(URL+'myinfo', data)
 }
@@ -45,3 +45,17 @@ export const operateFinishAPI = function (data) {
 export const operatenotPassAPI = function (data) {
   return get(URL+'notPass', data)
 }
+
+export const reportingInfo = function (data) {
+  return get(URL+'reportingInfo', data)
+}
+export const patrolList = function (data) {
+  return get(URL+'patrolList', data)
+}
+export const disasterPatrolList = function (data) {
+  return get(URL+'disasterPatrolList', data)
+}
+export const patrolInfo = function (data) {
+  return get(URL+'patrolInfo', data)
+}
+

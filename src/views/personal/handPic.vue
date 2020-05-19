@@ -91,11 +91,12 @@ export default {
     }
   },
   mounted() {
+    this.userinfo = this.localData('get','userinfo');
     this.getMyIndex()
   },
   methods:{
     getMyIndex() {
-      getMyIndexAPI({phone: '123456'}).then(res => {
+      getMyIndexAPI({phone: this.userinfo }).then(res => {
         console.log(res.patrol)
         this.myInfo = res.my;
         this.num = {
@@ -109,7 +110,7 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      getMyReadilyList({phone:"123456",type:"",page:this.page}).then(res => {
+      getMyReadilyList({phone:this.userinfo ,type:"",page:this.page}).then(res => {
         // res.id = id
         if(res.data.length >= 1){
           this.list.push(...res.data);

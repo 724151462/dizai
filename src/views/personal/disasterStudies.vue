@@ -96,11 +96,12 @@ export default {
     }
   },
   mounted() {
+    this.userinfo = this.localData('get','userinfo');
     this.getMyIndex()
   },
   methods: {
     getMyIndex() {
-      getMyIndexAPI({phone: '123456'}).then(res => {
+      getMyIndexAPI({phone: this.userinfo }).then(res => {
         console.log(res)
         this.myInfo = res.my;
         this.num = {

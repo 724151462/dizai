@@ -1,11 +1,11 @@
 <template>
   <div class="pu-bg">
-    <navBar :title="'灾（险）情速报'"></navBar>
+    <!-- <navBar :title="'灾（险）情速报'"></navBar> -->
     <div class="border-b-deep pad-tb-10">
       <span> <b> 2020年第三轮降雨（7月1日-9月30日）</b></span>
     </div>
     <van-form @submit="onSubmit">
-      <van-cell title="灾情时间区间" :value="date" @click="show = true" />
+      <!-- <van-cell title="灾情时间区间" :value="date" @click="show = true" /> -->
       <van-calendar v-model="show" type="range" @confirm="onConfirm" />
       <van-field
         :v-model="zqNum"
@@ -77,6 +77,9 @@ export default {
       this.date = `${this.formatDate(start)} - ${this.formatDate(end)}`;
       console.log(this.date)
     },
+  },
+  mounted(){
+    this.nav('灾（险）情速报');
   }
 }
 </script>

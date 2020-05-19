@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navBar :title="'我的'" :isBack="false"></navBar>
+    <!-- <navBar :title="'我的'" :isBack="false"></navBar> -->
     <div class="mine-base pu-row">
       <div class="pu-row">
         <div class="pu-column al-start left-info">
@@ -22,7 +22,7 @@
       <van-cell class="border-b" title="巡查签到" is-link url="/mine/toursignrecord" :value="num.patrol?num.patrol:0" />
       <van-cell class="border-b" title="灾（险）情速报" is-link url="/mine/quickreport" :value="num.reporting?num.reporting:0" />
       <van-cell class="border-b" title="灾（险）情上报" is-link url="/mine/reported" :value="num.schedule?num.schedule:0" />
-      <van-cell class="border-b" title="群众随手拍处理" is-link url="/mine/qzHandPic" :value="num.allreadilye?num.allreadilye:0" />
+      <van-cell class="border-b" title="群众随手拍处理" is-link url="/mine/qzHandPic" :value="num.allreadily?num.allreadily:0" />
     </div>
     <div class="partment">
       <span>
@@ -43,11 +43,13 @@ export default {
     }
   },
   mounted() {
+    this.nav('我的');
+    this.userinfo = this.localData('get','userinfo');
     this.getMyIndex()
   },
   methods:{
     getMyIndex() {
-      getMyIndexAPI({phone: '123456'}).then(res => {
+      getMyIndexAPI({phone: this.userinfo }).then(res => {
         console.log(res)
         this.myInfo = res.my;
         this.num = {
@@ -55,8 +57,9 @@ export default {
           patrol:res.patrol,
           reporting:res.reporting,
           schedule:res.schedule,
-          allreadilye:res.allreadilye
+          allreadily:res.allreadily
         }
+        console.log(this.num);
       })
     },
     toDetail() {
