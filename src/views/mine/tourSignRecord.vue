@@ -17,17 +17,17 @@
           <span class="f-22" @click="to(item.main_id)"><b>{{item.name}}</b></span>
           <span class="mar-tb-10" @click="to(item.main_id)">{{item.content}}</span>
           <div class="img-wrapper pu-row" @click="to(item.main_id)">
-            <templat v-if="item.image.length != 0" class="xxx">
+            <template v-if="item.images.length != 0" class="xxx">
                 <img
               class="mar-r-5 aaaa"
-              v-for="(pic, index) in item.image"
+              v-for="(pic, index) in item.images"
               :src="pic"
               :key="index"
               :preview="index"
               preview-text="描述文字"
               alt=""
             />
-                </templat>
+                </template>
          <van-empty v-else description="暂无图片" />
            
           </div>

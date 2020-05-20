@@ -54,6 +54,12 @@ const routes = [
       import(/* webpackChunkName: "tour" */ "../views/tour/subao.vue"),
   },
   {
+    path: "/tour/addrchoose",
+    name: "地址选择",
+    component: () =>
+      import(/* webpackChunkName: "tour" */ "../views/tour/addrchoose.vue"),
+  },
+  {
     path: "/tour/shangbao",
     name: "上报",
     component: () =>

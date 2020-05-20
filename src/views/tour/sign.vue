@@ -9,14 +9,14 @@
         :value="value"
         label="灾险点"
         placeholder="请选择灾点名称"
-        @click="showPicker = true"
         class="border-b"
       />
       <van-field
         v-model="address"
         name="巡查位置"
         label="巡查位置"
-        placeholder="巡查位置"
+        placeholder="点击选择巡查位置"
+        @click="toChooseAddr"
         readonly
         class="border-b"
       />
@@ -79,7 +79,7 @@
 export default {
   data() {
     return{
-      address: "光泽县芝麻镇芝麻村43号",
+      address: "",
       value: '',
       detailValue: '',
       columns: ['地灾点-地面塌陷1 福田路','地灾点-地面塌陷2 福田路','地灾点-地面塌陷3 福田路'],
@@ -91,6 +91,9 @@ export default {
     }
   },
   methods: {
+    toChooseAddr() {
+      this.$router.push({path: '/tour/addrchoose'})
+    },
     onSubmit() {
       
     },
@@ -105,6 +108,12 @@ export default {
   },
   mounted(){
     this.nav('巡查签到');
+    this.address = sessionStorage.getItem('selectedAddr') || ''
+  },
+  beforeDestroy() {
+    if (sessionStorage.getItem('selectedAddr')) {
+      sessionStorage.removeItem('selectedAddr')
+    }
   }
 }
 </script>

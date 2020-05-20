@@ -47,11 +47,11 @@
       <van-field
         readonly
         clickable
-        name="picker"
+        name="input"
         :value="zdAddress"
         label="灾点地址"
         placeholder="点击选择地址"
-        @click="zdAddressPicker = true"
+        @click="toChooseAddr"
         class="border-b"
       />
       <van-field
@@ -123,7 +123,6 @@
 </template>
 
 <script>
-import AMap from "AMap";
 export default {
   data() {
     return{
@@ -150,27 +149,16 @@ export default {
   },
   mounted() {
     this.nav('灾（险）情上报');
-    this.getLocalNearby()
+    this.zdAddress = sessionStorage.getItem('selectedAddr') || ''
+  },
+  beforeDestroy() {
+    if (sessionStorage.getItem('selectedAddr')) {
+      sessionStorage.removeItem('selectedAddr')
+    }
   },
   methods:{
-    getLocalNearby() {
-      console.log(sessionStorage.getItem('location'))
-      let cpoint = sessionStorage.getItem('location').split(',')
-      var that = this
-      AMap.service(["AMap.PlaceSearch"], function() {
-        var placeSearch = new AMap.PlaceSearch({ 
-              pageSize: 10, // 单页显示结果条数
-              pageIndex: 1, // 页码
-          });
-          placeSearch.searchNearBy('', cpoint, 500, function(status, result) {
-            if (status == 'complete') {
-              console.log(result.poiList)
-              that.locationList = result.poiList.pois.map((item) => {
-                return item.name
-              })
-            }
-          });
-      })
+    toChooseAddr() {
+      this.$router.push({path: '/tour/addrchoose'})
     },
     onSubmit(){
 

@@ -6,17 +6,17 @@
             {{log[0].name}}
         </div>
         <div class="p_img img-wrapper pu-row">
-             <templat v-if="info.image.length != 0" class="xxx">
+             <template v-if="info.images.length != 0" class="xxx">
                  <img
                 class="mar-r-5 aaaa"
-                v-for="(pic, index) in info.image"
+                v-for="(pic, index) in info.images"
                 :src="pic"
                 :key="index"
                 :preview="index"
                 preview-text="描述文字"
                 alt=""
             />
-                </templat>
+                </template>
          <van-empty v-else description="暂无图片" />
            
            
@@ -69,11 +69,11 @@
         </div> -->
         <div class="cell_group_line">
             <div class="line_title">责任人</div>
-            <div class="line_text">
+            <!-- <div class="line_text">
                 {{log[0].username}}
                  / 
                 <span>{{log[0].mobile}}</span>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="henxian"></div>
@@ -88,7 +88,7 @@
                 <div class="p_steps_imgs">
                     <img
                         class="p_steps_img"
-                        v-for="(pic, index) in item.image"
+                        v-for="(pic, index) in item.images"
                         :src="pic"
                         :key="index"
                         :preview="index"
@@ -109,8 +109,14 @@ import {patrolInfo} from '../../api/mine'
 export default {
     data(){
         return {
-            info:{},
-            log:[]
+            info:{
+                images: []
+            },
+            log:[
+                {
+                    name: ''
+                }
+            ]
         }
     },
   methods: {

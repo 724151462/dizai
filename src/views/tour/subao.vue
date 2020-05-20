@@ -2,57 +2,74 @@
   <div class="pu-bg">
     <!-- <navBar :title="'灾（险）情速报'"></navBar> -->
     <div class="border-b-deep pad-tb-10">
-      <span> <b> 2020年第三轮降雨（7月1日-9月30日）</b></span>
+      <span> <b> {{titleInfo.name}}</b></span>
     </div>
     <van-form @submit="onSubmit">
       <!-- <van-cell title="灾情时间区间" :value="date" @click="show = true" /> -->
-      <van-calendar v-model="show" type="range" @confirm="onConfirm" />
+      <!-- <van-calendar v-model="show" type="range" @confirm="onConfirm" /> -->
       <van-field
-        :v-model="zqNum"
+        v-model="zqNum"
+        name="disaster_number"
         label="灾情数量"
         placeholder="输入灾情数量"
         class="border-b"
       />
       <van-field
-        :v-model="xqNum"
+        v-model="xqNum"
+        name="danger_number"
         label="险情数量"
         placeholder="输入险情数量"
         class="border-b"
       />
       <van-field
-        :v-model="xcdzdNum"
+        v-model="tranNum"
+        name="move_people"
+        label="转移人次"
+        placeholder="输入转移人次"
+        class="border-b"
+      />
+      <van-field
+        v-model="xcLocation"
+        name="location"
         label="巡查地灾点"
+        clickable
+        @click="toChooseAddr"
         placeholder="请输入数量"
         class="border-b"
       />
       <van-field
-        :v-model="tranNum"
+        v-model="gdbpNum"
+        name="steep_number"
         label="巡查高陡边坡"
         placeholder="请输入数量"
         class="border-b"
       />
       <van-field
-        :v-model="tranNum"
+        v-model="xcTimesNum"
+        name="patrol_number"
         label="巡查人次"
         placeholder="输入巡查人次"
         class="border-b"
       />
       <van-field
-        :v-model="tranNum"
+        v-model="yjPeopleNum"
+        name="dispatch_number"
         label="出动应急技术人员人次"
         placeholder="输入次数"
         class="border-b"
       />
-    </van-form>
     <div class="confirm-wrapper pu-column al-center">
       <span class="f-12 f-gray">上报人：张某/巡查员</span>
       <span class="f-12 f-gray">建阳市童游街道自然资源管理所</span>
-      <van-button class="mar-t-10" style="width: 150px;" round type="warning">确认上传</van-button>
+      <van-button class="mar-t-10" style="width: 150px;" round type="warning"
+       native-type="submit">确认上传</van-button>
     </div>
+  </van-form>
   </div>
 </template>
 
 <script>
+import {subaoTitleAPI, subaoSubmitAPI} from '../../api/tour'
 export default {
   data() {
     return {
@@ -60,12 +77,28 @@ export default {
       show: false,
       zqNum: '',
       xqNum: '',
-      tranNum: ''
+      xcLocation: '',
+      xcTimesNum: '',
+      yjPeopleNum: '',
+      gdbpNum: '',
+      tranNum: '',
+      titleInfo: {}
     }
   },
   methods:{
-    onSubmit() {
-
+    toChooseAddr() {
+      this.$router.push({path: '/tour/addrchoose'})
+    },
+    onSubmit(values) {
+      values.id = this.titleInfo.id
+      values.phone = '123456'
+      console.log(values)
+      subaoSubmitAPI(values)
+    },
+    getTitle() {
+      subaoTitleAPI().then((res) => {
+        this.titleInfo = res.data
+      })
     },
     formatDate(date) {
       console.log(date)
@@ -78,8 +111,15 @@ export default {
       console.log(this.date)
     },
   },
+  beforeDestroy() {
+    if (sessionStorage.getItem('selectedAddr')) {
+      sessionStorage.removeItem('selectedAddr')
+    }
+  },
   mounted(){
     this.nav('灾（险）情速报');
+    this.getTitle()
+    this.xcLocation = sessionStorage.getItem('selectedAddr') || ''
   }
 }
 </script>
