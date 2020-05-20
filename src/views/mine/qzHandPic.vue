@@ -39,8 +39,8 @@
               <span class="f-gray" style="margin-left: 30px">{{timestampToTime(item.uptime)}}</span>
             </div>
             <div class="operation">
-              <van-button type="danger" size="mini" @click="del(item.id)">删除</van-button>
-              <van-button type="info" size="mini" @click="ok(item.id)">审核通过</van-button>
+              <van-button v-if="userinfo.position == '乡镇管理员'" type="danger" size="mini" @click="del(item.id)">删除</van-button>
+              <van-button v-if="userinfo.position == '区县管理员' || userinfo.position == '区市管理员'" type="info" size="mini" @click="ok(item.id)">审核通过</van-button>
             </div>
           </div>
         </div>

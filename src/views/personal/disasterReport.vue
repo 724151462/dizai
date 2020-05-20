@@ -60,13 +60,15 @@
             <div @click="to(item.id)"  class="ctm" v-for="(item,i) in arr4" :key="i">
               <div class="ctm_title">{{item.name}}</div>
               <div class="ctm_info">
-                <time>{{timestampToTime(item.happen_time)}}</time>
-                <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
-                <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
-                <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
-                <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
-                <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
-                <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
+                  <img :src="item.avatar" alt="">
+                  <span>{{item.username}}</span>
+                  <time>{{timestampToTime(item.happen_time)}}</time>
+                  <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
+                  <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
+                  <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
+                  <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
+                  <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
+                  <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
               </div>
             </div>
           </van-list>
@@ -161,13 +163,14 @@ export default {
       if(this.type == '已办结') num = 1;
       if(this.type == '已列入') num = 2;
       if(this.type == 'all') num = 3;
-      getScheduleList({phone:"123456",type:'all',page:this.page[num]}).then(res => {
+      getScheduleList({phone:"123456",type:this.type,page:this.page[num]}).then(res => {
         // res.id = id
         if(res.data.length > 0){
-          // if(this.type == '已上报') this.arr.push(...res.data);
-          // if(this.type == '已办结') this.arr2.push(...res.data);
-          // if(this.type == '已列入') this.arr3.push(...res.data);
-          this.arr4.push(...res.data);
+          if(this.type == '已上报') this.arr.push(...res.data);
+          if(this.type == '已办结') this.arr2.push(...res.data);
+          if(this.type == '已列入') this.arr3.push(...res.data);
+          if(this.type == 'all') this.arr4.push(...res.data);
+          // console.log(res.data);
           this.page[num] += 1;
           // 加载状态结束
           this.loading[num] = false;
@@ -305,6 +308,7 @@ export default {
 .ctm_info span{
     font-size: 16px;
     color: #000;
+    margin-left: 10px;
      display: inline-block;
     box-sizing: border-box;
     vertical-align: middle;
@@ -312,6 +316,7 @@ export default {
 .ctm_info time{
     font-size: 14px;
     color: #aaaaaa;
+    margin-left: 20px;
     display: inline-block;
     box-sizing: border-box;
     vertical-align: middle;

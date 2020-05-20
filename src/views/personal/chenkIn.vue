@@ -69,6 +69,7 @@
         </div>
         <div class="mar-t-10 pu-row pu-row-sb" style="width: 100%">
           <span class="f-gray">{{timestampToTime(item.uptime)}}</span>
+
         </div>
       </div>
     </van-list>
@@ -76,7 +77,7 @@
 </template>
 
 <script>
-import {getMyIndexAPI,patrolList} from '../../api/mine'
+import {getMyIndexAPI,getMyReadilyList,delReadilyInfo} from '../../api/mine'
 export default {
   data() {
     return {
@@ -108,23 +109,45 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      patrolList({phone:this.userinfo,page:this.page}).then(res => {
-        console.log(res);
-        if(res.data.length > 0){
+      getMyReadilyList({phone:this.userinfo,type:"",page:this.page}).then(res => {
+        // res.id = id
+        if(res.data.length >= 1){
           this.list.push(...res.data);
-          this.page += 1;
-          // 加载状态结束
-          this.loading = false;
-          // 数据全部加载完成
-          if (this.page > res.page.all) {
-            this.finished = true;
-          }
-        }else{
-          this.loading = false;
-          this.finished = true;
         }
         
+        this.page += 1;
+        // 加载状态结束
+        this.loading = false;
+        // 数据全部加载完成
+        if (this.page > res.page.all) {
+          this.finished = true;
+        }
       })
+    },
+    del(id){
+      this.$dialog.confirm({
+        title: '删除随手拍',
+        message: '是否确认删除该随手拍',
+      })
+      .then(() => {
+        // on confirm
+        delReadilyInfo({id:id}).then(res => {
+          if(res.status == 'fail'){
+             this.$toast.fail(res.msg);
+          }else if(res.status == 'success'){
+            for(var i = 0; i < this.list.length; i++){
+              if(this.list[i].id === id){
+                this.list.splice(i,1);
+              }
+            }
+            this.$toast.success(res.msg);
+          } 
+        })
+      })
+      .catch(() => {
+        // on cancel
+      });
+     
     },
     timestampToTime(timestamp) {
       var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000

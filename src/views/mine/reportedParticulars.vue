@@ -108,8 +108,8 @@
     <van-field 
     label-class="redColor" 
     v-model="why" 
-    label="原因" 
-    placeholder="(未通过、撤销、删除 必填)"/>
+    label="处置原因" 
+    placeholder="(未通过、撤销、删除、驳回 必填原因)"/>
     <br>
     <!-- 处置意见  指导一线处置/技术人员现场处置/出具调查报告/函告属地政府 -->
     <van-field
@@ -134,30 +134,31 @@
         />
     </van-popup>
     <div class="typeButton">
-        <template v-if="user == '区市级人员' && info.status == '已上报'">
-            <van-button @click="unsubscribe" round type="info" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">删除上报</van-button>
-            <van-button @click="includeList" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">列入系统</van-button>
-        </template>
-        <br>
-        <template v-if="info.personnel == userinfo && info.status == '已上报'">
-            <van-row gutter="20">
-                <van-col span="12"><van-button round type="info" @click="unsubscribe" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">撤销上报</van-button></van-col>
-                <van-col span="12"><van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">修改上报</van-button></van-col>
-            </van-row>
-        </template>
-        <br>
-        <template v-if="user == '区县级人员' && info.status == '已上报'">
-            <van-row gutter="20">
-                <van-col span="12"><van-button round type="info" @click="notPass" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">未通过</van-button></van-col>
-                <van-col span="12"><van-button round type="info" @click="finish" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">办结</van-button></van-col>    
-            </van-row>
-        </template>
-        <template v-if="user == '区县级人员' && info.status == '已办结'">
-            <van-button @click="cancellation" round type="info" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">撤销办结</van-button>
-            <van-button @click="includeList" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">列入系统</van-button>
-        </template>
-
-        <van-button v-if="(user == '区县级人员' ||  user == '区市级人员')&& info.status == '已列入'" @click="delist" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消列入</van-button>
+        <van-row gutter="20" v-if="(info.personnel == userinfo || userinfo.position == '社区管理员' || userinfo.position == '乡镇管理员')&& info.status == '已上报'">
+            <van-col span="12"><van-button round type="info" @click="unsubscribe" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">撤销上报</van-button></van-col>
+            <van-col span="12"><van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">修改上报</van-button></van-col>
+            <br>
+        </van-row>
+        <van-row gutter="20" v-if="(userinfo.position == '区县管理员' || userinfo.position == '乡镇管理员')&& info.status == '已上报'">
+            <van-col span="12"><van-button round type="info" @click="notPass"  size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">驳回</van-button></van-col>
+            <van-col span="12"><van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">报上级处理</van-button></van-col>
+            <br>
+        </van-row>
+        
+        <van-row gutter="20" v-if="userinfo.position == '区县管理员' && info.status == '已上报'">
+            <van-col span="12"><van-button @click="unsubscribe" round type="info" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">删除上报</van-button></van-col>
+            <van-col span="12"><van-button round type="info" @click="finish" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">办结</van-button></van-col>
+            <br>
+        </van-row>
+        <van-row gutter="20" v-if="(userinfo.position == '区县管理员' ||  userinfo.position == '区市管理员') && info.status == '已办结'">
+            <van-col span="12"><van-button @click="cancellation" round type="info" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">撤销办结</van-button></van-col>
+            <van-col span="12"><van-button @click="includeList" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">列入系统</van-button></van-col>    
+            <br>
+        </van-row>
+        <van-row gutter="20" v-if="(userinfo.position == '区县管理员' ||  userinfo.position == '区市管理员')&& info.status == '已列入'">
+            <van-col span="16"><van-button  @click="delist" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消列入</van-button></van-col>    
+            <br>
+        </van-row>
     </div>
   </div>
 </template>

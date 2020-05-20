@@ -159,6 +159,7 @@ export default {
         this.yxbj = res.county
         this.zqd = res.disaster
         this.xqd = res.danger
+        this.menuClick(0)
       })
     },
     getDetail(id) {
@@ -231,129 +232,138 @@ export default {
           let dzd = this.dzd.filter(element => {
             return element.x_coordinate != '' && element.y_coordinate != ''
           })
-          dzd.forEach((element) => {
-            console.log(element.x_coordinate, element.y_coordinate)
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-              extData: {
-                id: element.id,
-              },
-            });
-            window.map.add(marker);
-            marker.on("click", (evt) => {
+          // eslint-disable-next-line no-unused-vars
+          var dzdCluster, dzdMarkers = [];
+          dzd.forEach(element => {
+            let marker = new AMap.Marker({
+                position: [element.x_coordinate, element.y_coordinate],
+                content: '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
+                offset: new AMap.Pixel(-15, -15),
+                extData: {id: element.id}
+            })
+            dzdMarkers.push(marker)
+            marker.on('click', (evt) => {
               let id = evt.target.De.extData.id
               this.getDetail(id)
               setTimeout(() => {
                 this.pointPop = true;
               }, 200);
-            });
-          });
+              console.log(evt)
+            })
+          })
+          dzdCluster = new AMap.MarkerClusterer(window.map, dzdMarkers, {gridSize: 80});
+          window.map.setCenter([dzd[0].x_coordinate,dzd[0].y_coordinate]);
+          
           break;
         case 1:
           // eslint-disable-next-line no-case-declarations
           let gdbp = this.gdbp.filter(element => {
             return element.x_coordinate != '' && element.y_coordinate != ''
           })
-          gdbp.forEach((element) => {
-            console.log(element.x_coordinate, element.y_coordinate)
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-              extData: {
-                id: element.id,
-              },
-            });
-            window.map.add(marker);
-            marker.on("click", (evt) => {
-              console.log(evt.target.De.extData.id);
+          // eslint-disable-next-line no-unused-vars
+          var gdbpCluster, gdbpMarkers = [];
+          gdbp.forEach(element => {
+            let marker = new AMap.Marker({
+                position: [element.x_coordinate, element.y_coordinate],
+                content: '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
+                offset: new AMap.Pixel(-15, -15),
+                extData: {id: element.id}
+            })
+            gdbpMarkers.push(marker)
+            marker.on('click', (evt) => {
+              let id = evt.target.De.extData.id
+              this.getDetail(id)
               setTimeout(() => {
                 this.pointPop = true;
               }, 200);
-            });
-          });
+              console.log(evt)
+            })
+          })
+          gdbpCluster = new AMap.MarkerClusterer(window.map, gdbpMarkers, {gridSize: 80});
+          window.map.setCenter([gdbp[0].x_coordinate,gdbp[0].y_coordinate]);
           break;
         case 2:
           // eslint-disable-next-line no-case-declarations
           let yxbj = this.yxbj.filter(element => {
             return element.x_coordinate != '' && element.y_coordinate != ''
           })
-          yxbj.forEach((element) => {
-            console.log(element.x_coordinate, element.y_coordinate)
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-              extData: {
-                id: element.id,
-              },
-            });
-            window.map.add(marker);
-            marker.on("click", (evt) => {
-              console.log(evt.target.De.extData.id);
+          // eslint-disable-next-line no-unused-vars
+          var yxbjCluster, yxbjMarkers = [];
+          yxbj.forEach(element => {
+            let marker = new AMap.Marker({
+                position: [element.x_coordinate, element.y_coordinate],
+                content: '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
+                offset: new AMap.Pixel(-15, -15),
+                extData: {id: element.id}
+            })
+            yxbjMarkers.push(marker)
+            marker.on('click', (evt) => {
+              let id = evt.target.De.extData.id
+              this.getDetail(id)
               setTimeout(() => {
                 this.pointPop = true;
               }, 200);
-            });
-          });
+              console.log(evt)
+            })
+          })
+          yxbjCluster = new AMap.MarkerClusterer(window.map, yxbjMarkers, {gridSize: 80});
+          window.map.setCenter([yxbj[0].x_coordinate,yxbj[0].y_coordinate]);
           break;
         case 3:
           // eslint-disable-next-line no-case-declarations
           let zqd = this.zqd.filter(element => {
             return element.x_coordinate != '' && element.y_coordinate != ''
           })
-          zqd.forEach((element) => {
-            console.log(element.x_coordinate, element.y_coordinate)
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-              extData: {
-                id: element.id,
-              },
-            });
-            window.map.add(marker);
-            marker.on("click", (evt) => {
-              console.log(evt.target.De.extData.id);
+          // eslint-disable-next-line no-unused-vars
+          var zqdCluster, zqdMarkers = [];
+          zqd.forEach(element => {
+            let marker = new AMap.Marker({
+                position: [element.x_coordinate, element.y_coordinate],
+                content: '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
+                offset: new AMap.Pixel(-15, -15),
+                extData: {id: element.id}
+            })
+            zqdMarkers.push(marker)
+            marker.on('click', (evt) => {
+              let id = evt.target.De.extData.id
+              this.getDetail(id)
               setTimeout(() => {
                 this.pointPop = true;
               }, 200);
-            });
-          });
+              console.log(evt)
+            })
+          })
+          zqdCluster = new AMap.MarkerClusterer(window.map, zqdMarkers, {gridSize: 80});
+          window.map.setCenter([zqd[0].x_coordinate,zqd[0].y_coordinate]);
           break;
         case 4:
           // eslint-disable-next-line no-case-declarations
           let xqd = this.xqd.filter(element => {
             return element.x_coordinate != '' && element.y_coordinate != ''
           })
-          xqd.forEach((element) => {
-            console.log(element.x_coordinate, element.y_coordinate)
-            var marker = new AMap.Marker({
-              position: new AMap.LngLat(element.x_coordinate, element.y_coordinate),
-              icon:
-                "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-              offset: new AMap.Pixel(-13, -30),
-              extData: {
-                id: element.id,
-              },
-            });
-            window.map.add(marker);
-            marker.on("click", (evt) => {
-              console.log(evt.target.De.extData.id);
+          // eslint-disable-next-line no-unused-vars
+          var xqdCluster, xqdMarkers = [];
+          xqd.forEach(element => {
+            let marker = new AMap.Marker({
+                position: [element.x_coordinate, element.y_coordinate],
+                content: '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
+                offset: new AMap.Pixel(-15, -15),
+                extData: {id: element.id}
+            })
+            xqdMarkers.push(marker)
+            marker.on('click', (evt) => {
+              let id = evt.target.De.extData.id
+              this.getDetail(id)
               setTimeout(() => {
                 this.pointPop = true;
               }, 200);
-            });
-          });
+              console.log(evt)
+            })
+          })
+          xqdCluster = new AMap.MarkerClusterer(window.map, xqdMarkers, {gridSize: 80});
+          window.map.setCenter([xqd[0].x_coordinate,xqd[0].y_coordinate]);
           break;
       }
-      window.map.setFitView();
     },
     toDetail() {
       console.log(this.pDetail)

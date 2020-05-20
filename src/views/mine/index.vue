@@ -19,10 +19,10 @@
     </div>
     <div>
       <van-cell class="border-b" title="我的随手拍" is-link :value="num.readily" url="/mine/handPic" />
-      <van-cell class="border-b" title="巡查签到" is-link url="/mine/toursignrecord" :value="num.patrol?num.patrol:0" />
-      <van-cell class="border-b" title="灾（险）情速报" is-link url="/mine/quickreport" :value="num.reporting?num.reporting:0" />
-      <van-cell class="border-b" title="灾（险）情上报" is-link url="/mine/reported" :value="num.schedule?num.schedule:0" />
-      <van-cell class="border-b" title="群众随手拍处理" is-link url="/mine/qzHandPic" :value="num.allreadily?num.allreadily:0" />
+      <van-cell class="border-b" v-if="userinfo.position != '群众'" title="巡查签到" is-link url="/mine/toursignrecord" :value="num.patrol?num.patrol:0" />
+      <van-cell class="border-b" v-if="userinfo.position != '群众' && userinfo.position != '社区管理员'" title="灾（险）情速报" is-link url="/mine/quickreport" :value="num.reporting?num.reporting:0" />
+      <van-cell class="border-b" v-if="userinfo.position != '群众'" title="灾（险）情上报" is-link url="/mine/reported" :value="num.schedule?num.schedule:0" />
+      <van-cell class="border-b" v-if="userinfo.position != '群众'" title="群众随手拍处理" is-link url="/mine/qzHandPic" :value="num.allreadily?num.allreadily:0" />
     </div>
     <div class="partment">
       <span>

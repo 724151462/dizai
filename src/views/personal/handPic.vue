@@ -69,6 +69,7 @@
         </div>
         <div class="mar-t-10 pu-row pu-row-sb" style="width: 100%">
           <span class="f-gray">{{timestampToTime(item.uptime)}}</span>
+          <span style="color:#5ABEEF" @click="del(item.id)">删除</span>
         </div>
       </div>
     </van-list>
@@ -76,7 +77,7 @@
 </template>
 
 <script>
-import {getMyIndexAPI,getMyReadilyList} from '../../api/mine'
+import {getMyIndexAPI,getMyReadilyList,delReadilyInfo} from '../../api/mine'
 export default {
   data() {
     return {
@@ -123,6 +124,31 @@ export default {
           this.finished = true;
         }
       })
+    },
+    del(id){
+      this.$dialog.confirm({
+        title: '删除随手拍',
+        message: '是否确认删除该随手拍',
+      })
+      .then(() => {
+        // on confirm
+        delReadilyInfo({id:id}).then(res => {
+          if(res.status == 'fail'){
+             this.$toast.fail(res.msg);
+          }else if(res.status == 'success'){
+            for(var i = 0; i < this.list.length; i++){
+              if(this.list[i].id === id){
+                this.list.splice(i,1);
+              }
+            }
+            this.$toast.success(res.msg);
+          } 
+        })
+      })
+      .catch(() => {
+        // on cancel
+      });
+     
     },
     timestampToTime(timestamp) {
       var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
