@@ -18,21 +18,21 @@
     <div class="handPic-info">
       <ul class="chooser-list">
         <li 
-          @click="$router.push({path: '/personal/handPic'})"
+          @click="$router.push({path: '/personal/handPic',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.readily != undefined">{{this.num.readily}}</span>
           <span v-else>0</span>
           <div>随手拍</div>
         </li>
         <li
-          @click="$router.push({path: '/personal/chenkIn'})"
+          @click="$router.push({path: '/personal/chenkIn',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.patrol != undefined">{{this.num.patrol}}</span>
           <span v-else>0</span>
           <div>巡查签到</div>
         </li>
         <li
-          @click="$router.push({path: '/personal/disasterStudies'})"
+          @click="$router.push({path: '/personal/disasterStudies',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.reporting != undefined">{{this.num.reporting}}</span>
           <span v-else>0</span>
@@ -40,7 +40,7 @@
         </li>
         <li
           :class="['active']"   
-          @click="$router.push({path: '/personal/disasterReport'})"
+          @click="$router.push({path: '/personal/disasterReport',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.schedule != undefined">{{this.num.schedule}}</span>
           <span v-else>0</span>
@@ -49,30 +49,28 @@
       </ul>
     </div>
     <!-- <van-tabs @click="recordChange"> -->
-        <div class="ctm_list">
-          <van-list
-          v-model="loading[3]"
-          :finished="finished[3]"
-          finished-text="没有更多了"
-          @load="onLoad"
-          :immediate-check='false'
-        >
-            <div @click="to(item.id)"  class="ctm" v-for="(item,i) in arr4" :key="i">
-              <div class="ctm_title">{{item.name}}</div>
-              <div class="ctm_info">
-                  <img :src="item.avatar" alt="">
-                  <span>{{item.username}}</span>
-                  <time>{{timestampToTime(item.happen_time)}}</time>
-                  <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
-                  <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
-                  <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
-                  <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
-                  <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
-                  <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
-              </div>
-            </div>
-          </van-list>
+    <div class="ctm_list">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+        :immediate-check='false'
+      >
+        <div class="ctm" v-for="(item,i) in list" :key="i">
+          <div class="ctm_title">{{item.name}}</div>
+          <div class="ctm_info">
+            <time>{{timestampToTime(item.happen_time)}}</time>
+            <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
+            <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
+            <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
+            <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
+            <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
+            <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
+          </div>
         </div>
+      </van-list>
+    </div>
   </div>
 </template>
 <script>
@@ -82,14 +80,11 @@ export default {
     return{
       myInfo: {},
       num:{},
-      type:'已上报',
-      page:[1,1,1,1],
-      finished:[false,false,false,false,],
-      loading:[false,false,false,false],
-      arr:[],
-      arr2:[],
-      arr3:[],
-      arr4:[],
+      type:'all',
+      page:1,
+      finished:false,
+      loading:false,
+      list:[],
     }
   },
   mounted() {
@@ -99,7 +94,7 @@ export default {
   },
   methods: {
     getMyIndex() {
-      getMyIndexAPI({phone: this.userinfo}).then(res => {
+      getMyIndexAPI({phone: this.$route.query.mobile}).then(res => {
         console.log(res)
         this.myInfo = res.my;
         this.num = {
@@ -111,76 +106,22 @@ export default {
         }
       })
     },
-    recordChange(name, title) {
-      const _this = this;
-      switch (title) {
-        case "上报":
-          this.type="已上报";
-          this.page[0]=1;
-          this.arr = [];
-          setTimeout(function(){
-             console.log(666);
-            _this.onLoad();
-          },500)
-          break;
-        case "办结":
-          this.type="已办结";
-          this.page[1]=1;
-          this.arr2 = [];
-          setTimeout(function(){
-             console.log(555);
-            _this.onLoad();
-          },500)
-          break;
-        case "列入":
-          this.type="已列入";
-          this.page[2]=1;
-          this.arr3 = [];
-          setTimeout(function(){
-             console.log(444);
-            _this.onLoad();
-          },500)
-          break;
-        case "全部":
-          this.type="all";
-          this.page[3]=1;
-          this.arr4 = [];
-          setTimeout(function(){
-            console.log(333);
-            _this.onLoad();
-          },500)
-          break;
-      }
-      
-    },
-    to(id){
-      this.$router.push({path: '/mine/reportedparticulars',query:{id:id}})
-    },
     onLoad() {
-      var num = null;
       // 异步更新数据
-      if(this.type == '已上报') num = 0;
-      if(this.type == '已办结') num = 1;
-      if(this.type == '已列入') num = 2;
-      if(this.type == 'all') num = 3;
-      getScheduleList({phone:"123456",type:this.type,page:this.page[num]}).then(res => {
+      getScheduleList({phone:this.$route.query.mobile,type:this.type,page:this.page}).then(res => {
         // res.id = id
         if(res.data.length > 0){
-          if(this.type == '已上报') this.arr.push(...res.data);
-          if(this.type == '已办结') this.arr2.push(...res.data);
-          if(this.type == '已列入') this.arr3.push(...res.data);
-          if(this.type == 'all') this.arr4.push(...res.data);
-          // console.log(res.data);
-          this.page[num] += 1;
+          if(this.type == 'all') this.list.push(...res.data);
+          this.page += 1;
           // 加载状态结束
-          this.loading[num] = false;
+          this.loading = false;
           // 数据全部加载完成
-          if (this.page[num] > res.page.all) {
-            this.finished[num] = true;
+          if (this.page > res.page.all) {
+            this.finished = true;
           }
         }else{
-          this.loading[num] = false;
-          this.finished[num] = true;
+          this.loading = false;
+          this.finished = true;
         }
         
       })
@@ -226,21 +167,21 @@ export default {
 .left-info > span > span{
   font-size: 13px;
 }
-  .handPic-info{
-		padding: 8px 0;
-		font-size: 14px;
-	}
-	.handPic-info ul{
-		display: flex;
-    justify-content: space-around;
-  }
-  .handPic-info ul li{
-    width: 70px;
-    height: 40px;
-  }
-  .active{
-    background-color: #F8F8FB;
-  }
+.handPic-info{
+  padding: 8px 0;
+  font-size: 14px;
+}
+.handPic-info ul{
+  display: flex;
+  justify-content: space-around;
+}
+.handPic-info ul li{
+  width: 70px;
+  height: 40px;
+}
+.active{
+  background-color: #F8F8FB;
+}
 .img-wrapper{
   overflow-x: auto;
   img{
@@ -251,106 +192,104 @@ export default {
 .no-more{
   background-color: #F8F8FB;
 }
-  .order-top,.order-bottom{
-		padding: 0px 20px;
-		margin-bottom: 5px;
-	}
-	.order-top{
-		padding-bottom: 5px;
-  }
-	.order-status{
-		display: flex;
-		justify-content: space-between;
-		margin: 5px 0;
-  }
+.order-top,.order-bottom{
+  padding: 0px 20px;
+  margin-bottom: 5px;
+}
+.order-top{
+  padding-bottom: 5px;
+}
+.order-status{
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+}
 .ctm_list{
-    padding-top: 15px;
-    background-color: #f6f6f6;
+  padding-top: 15px;
+  background-color: #f6f6f6;
 }
 .ctm{
-    width: 100%;
-    box-sizing: border-box;
-    padding: 20px;
-    margin-bottom: 5px;
-    background-color: white;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  margin-bottom: 5px;
+  background-color: white;
 }
 .ctm_title{
-    font-size: 22px;
-    font-weight: 600;
-    text-align: left;
-    margin-bottom: 10px;
-    position: relative;
+  font-size: 22px;
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 10px;
+  position: relative;
 }
 .ctm_title::after{
-    content: "";
-    position: absolute;
-    top: 12px;
-    right: 7px;
-    width: 7px;
-    height: 7px;
-    border-top: 2px solid #aaaaaa;
-    border-right: 2px solid #aaaaaa;
-    transform: rotate(45deg);
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: 7px;
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid #aaaaaa;
+  border-right: 2px solid #aaaaaa;
+  transform: rotate(45deg);
 }
 .ctm_info{
-    text-align: left;
-    height: 30px;
-    line-height: 30px;
+  text-align: left;
+  height: 30px;
+  line-height: 30px;
 }
 .ctm_info img{
-    width: 25px;
-    height: 25px;
-    border-radius: 100%;
-     display: inline-block;
-    box-sizing: border-box;
-    vertical-align: middle;
+  width: 25px;
+  height: 25px;
+  border-radius: 100%;
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: middle;
 }
 .ctm_info span{
-    font-size: 16px;
-    color: #000;
-    margin-left: 10px;
-     display: inline-block;
-    box-sizing: border-box;
-    vertical-align: middle;
+  font-size: 16px;
+  color: #000;
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: middle;
 }
 .ctm_info time{
-    font-size: 14px;
-    color: #aaaaaa;
-    margin-left: 20px;
-    display: inline-block;
-    box-sizing: border-box;
-    vertical-align: middle;
+  font-size: 14px;
+  color: #aaaaaa;
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: middle;
 }
 .ctm_type{
-    display: inline-block;
-    box-sizing: border-box;
-    vertical-align: middle;
-    font-size: 14px !important;
-    float: right;
-    height: 25px;
-    line-height: 25px;
-    border-radius: 5px;
-    padding: 0 5px;
-    margin-top: 5px;
+  display: inline-block;
+  box-sizing: border-box;
+  vertical-align: middle;
+  font-size: 14px !important;
+  float: right;
+  height: 25px;
+  line-height: 25px;
+  border-radius: 5px;
+  padding: 0 5px;
+  margin-top: 5px;
 }
 .ysb{
-    color: rgb(211, 198, 198) !important;
-    border: 1px solid rgb(211, 198, 198) !important;
+  color: rgb(211, 198, 198) !important;
+  border: 1px solid rgb(211, 198, 198) !important;
 }
 .yxg{
-    color: rgb(255, 202, 2) !important;
-    border: 1px solid rgb(255, 202, 2) !important;
+  color: rgb(255, 202, 2) !important;
+  border: 1px solid rgb(255, 202, 2) !important;
 }
 .ybj{
-    color: rgb(31, 2, 255) !important;
-    border: 1px solid rgb(31, 2, 255) !important;
+  color: rgb(31, 2, 255) !important;
+  border: 1px solid rgb(31, 2, 255) !important;
 }
 .ylr{
-    color: rgb(38, 234, 245) !important;
-    border: 1px solid rgb(38, 234, 245) !important;
+  color: rgb(38, 234, 245) !important;
+  border: 1px solid rgb(38, 234, 245) !important;
 }
 .cxbj{
-    color: rgb(243, 60, 60) !important;
-    border: 1px solid rgb(243, 60, 60) !important;
+  color: rgb(243, 60, 60) !important;
+  border: 1px solid rgb(243, 60, 60) !important;
 }
 </style>

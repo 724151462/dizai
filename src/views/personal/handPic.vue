@@ -19,25 +19,25 @@
       <ul class="chooser-list">
         <li 
           :class="['active']"  
-          @click="$router.push({path: '/personal/handPic'})"
+          @click="$router.push({path: '/personal/handPic',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.readily != undefined">{{this.num.readily}}</span>
           <span v-else>0</span>
           <div>随手拍</div>
         </li>
         <li
-          @click="$router.push({path: '/personal/chenkIn'})"
+          @click="$router.push({path: '/personal/chenkIn',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.patrol != undefined">{{this.num.patrol}}</span>
           <span v-else>0</span>
           <div>巡查签到</div>
         </li>
-        <li @click="$router.push({path: '/personal/disasterStudies'})">
+        <li @click="$router.push({path: '/personal/disasterStudies',query:{mobile:$route.query.mobile}})">
           <span v-if="this.num.reporting != undefined">{{this.num.reporting}}</span>
           <span v-else>0</span>
           <div>灾情速报</div>
         </li>
-        <li @click="$router.push({path: '/personal/disasterReport'})">
+        <li @click="$router.push({path: '/personal/disasterReport',query:{mobile:$route.query.mobile}})">
           <span v-if="this.num.schedule != undefined">{{this.num.schedule}}</span>
           <span v-else>0</span>
           <div>灾情上报</div>
@@ -58,18 +58,20 @@
         <span class="f-22"><b>{{item.name}}</b></span>
         <span class="mar-tb-10">{{item.content}}</span>
         <div class="img-wrapper pu-row">
-          <img
-            class="mar-r-5"
-            v-for="(pic, index) in item.image"
-            :src="pic"
-            :key="index"
-            :preview="index" preview-text="描述文字"
-            alt=""
-          />
+          <template v-if="item.images.length != 0" class="xxx">
+            <img
+              class="mar-r-5"
+              v-for="(pic, index) in item.images"
+              :src="pic"
+              :key="index"
+              :preview="index" preview-text="描述文字"
+              alt=""
+            />
+          </template>
+          <van-empty v-else description="暂无图片" />
         </div>
         <div class="mar-t-10 pu-row pu-row-sb" style="width: 100%">
           <span class="f-gray">{{timestampToTime(item.uptime)}}</span>
-          <span style="color:#5ABEEF" @click="del(item.id)">删除</span>
         </div>
       </div>
     </van-list>
@@ -77,7 +79,7 @@
 </template>
 
 <script>
-import {getMyIndexAPI,getMyReadilyList,delReadilyInfo} from '../../api/mine'
+import {getMyIndexAPI,getMyReadilyList} from '../../api/mine'
 export default {
   data() {
     return {
@@ -96,7 +98,7 @@ export default {
   },
   methods:{
     getMyIndex() {
-      getMyIndexAPI({phone: this.userinfo }).then(res => {
+      getMyIndexAPI({phone: this.$route.query.mobile }).then(res => {
         console.log(res.patrol)
         this.myInfo = res.my;
         this.num = {
@@ -110,7 +112,7 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      getMyReadilyList({phone:this.userinfo ,type:"",page:this.page}).then(res => {
+      getMyReadilyList({phone:this.$route.query.mobile ,type:"",page:this.page}).then(res => {
         // res.id = id
         if(res.data.length >= 1){
           this.list.push(...res.data);
@@ -124,31 +126,6 @@ export default {
           this.finished = true;
         }
       })
-    },
-    del(id){
-      this.$dialog.confirm({
-        title: '删除随手拍',
-        message: '是否确认删除该随手拍',
-      })
-      .then(() => {
-        // on confirm
-        delReadilyInfo({id:id}).then(res => {
-          if(res.status == 'fail'){
-             this.$toast.fail(res.msg);
-          }else if(res.status == 'success'){
-            for(var i = 0; i < this.list.length; i++){
-              if(this.list[i].id === id){
-                this.list.splice(i,1);
-              }
-            }
-            this.$toast.success(res.msg);
-          } 
-        })
-      })
-      .catch(() => {
-        // on cancel
-      });
-     
     },
     timestampToTime(timestamp) {
       var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000

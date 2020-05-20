@@ -5,7 +5,7 @@
       <span class="f-22"><b>{{item.name}}</b></span>
       <span class="mar-tb-10">{{item.content}}</span>
       <div class="img-wrapper pu-row">
-        <templat v-if="item.images.length != 0">
+        <template v-if="item.images.length != 0">
           <img
             width="100"
             class="mar-r-5"
@@ -15,10 +15,10 @@
             :preview="index" preview-text="描述文字"
             alt=""
           />
-        </templat>
+        </template>
         <van-empty v-else description="暂无图片" />
       </div>
-      <div class="mar-t-10 pu-row">
+      <div class="mar-t-10 pu-row" @click="$router.push({path:'/personal/handPic',query:{mobile:item.mobile}})">
         <img src="../../assets/imgs/bad-bg.png" class="avatar-sm" alt="">
         <span class="mar-l-5">{{item.username}}</span>
         <span class="f-gray" style="margin-left: 30px">{{time(item.uptime)}}</span>

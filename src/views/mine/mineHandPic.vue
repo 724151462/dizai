@@ -15,10 +15,10 @@
         <span class="f-22"><b>{{item.name}}</b></span>
         <span class="mar-tb-10">{{item.content}}</span>
         <div class="img-wrapper pu-row">
-          <templat v-if="item.image.length != 0" class="xxx">
+          <templat v-if="item.images.length != 0" class="xxx">
           <img
             class="mar-r-5"
-            v-for="(pic, index) in item.image"
+            v-for="(pic, index) in item.images"
             :src="pic"
             :key="index"
             :preview="index" preview-text="描述文字"

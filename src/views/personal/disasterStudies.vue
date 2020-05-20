@@ -18,14 +18,14 @@
     <div class="handPic-info">
       <ul class="chooser-list">
         <li 
-          @click="$router.push({path: '/personal/handPic'})"
+          @click="$router.push({path: '/personal/handPic',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.readily != undefined">{{this.num.readily}}</span>
           <span v-else>0</span>
           <div>随手拍</div>
         </li>
         <li
-          @click="$router.push({path: '/personal/chenkIn'})"
+          @click="$router.push({path: '/personal/chenkIn',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.patrol != undefined">{{this.num.patrol}}</span>
           <span v-else>0</span>
@@ -33,14 +33,14 @@
         </li>
         <li
           :class="['active']"   
-          @click="$router.push({path: '/personal/disasterStudies'})"
+          @click="$router.push({path: '/personal/disasterStudies',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.reporting != undefined">{{this.num.reporting}}</span>
           <span v-else>0</span>
           <div>灾情速报</div>
         </li>
         <li
-          @click="$router.push({path: '/personal/disasterReport'})"
+          @click="$router.push({path: '/personal/disasterReport',query:{mobile:$route.query.mobile}})"
         >
           <span v-if="this.num.schedule != undefined">{{this.num.schedule}}</span>
           <span v-else>0</span>
@@ -48,51 +48,70 @@
         </li>
       </ul>
     </div>
-    <div
-      class="pu-column al-start pad-tb-5 pad-lr-10 bg-white"
-      style="align-items: flex-start;"
-      v-for="(item,index) in 3"
-      :key="index"
-    >
-      <h3>2020年第3轮降雨(7月1日-9月31日)</h3>
-      <div
-        class="pu-column dz-detail pad-tb-10"
-        style="align-items: flex-start;"
+    <div class="record_list">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
       >
-        <div class="mar-tb-5">
-          <span class="f-gray">灾情数量</span><span> 12处</span>
-          <span class="f-gray" style="margin-left: 50px">险情数量</span>
-          <span> 9处 </span>
+        <div 
+          class="record" 
+          v-for="(item,i) in list" 
+          :key="i"
+          @click="to(item.id)"
+        >
+          <div class="r_title">{{item.name}}</div>
+          <div>
+            <div class="amount">
+              <span class="amount_text">灾情数量</span>
+              <span class="amount_num">{{item.disaster_number}}处</span>
+            </div>
+            <div class="amount">
+              <span class="amount_text">险情数量</span>
+              <span class="amount_num">{{item.danger_number}}处</span>
+            </div>
+            <div class="amount">
+              <span class="amount_text">转移人数</span>
+              <span class="amount_num">{{item.move_people}}人</span>
+            </div>
+            <div class="amount">
+              <span class="amount_text">巡查地灾点</span>
+              <span class="amount_num">{{item.geologic_hazard_number}}次</span>
+            </div>
+            <div class="amount">
+              <span class="amount_text">巡查高陡边坡</span>
+              <span class="amount_num">{{item.steep_number}}次</span>
+            </div>
+            <div class="amount">
+              <span class="amount_text">巡查人次</span>
+              <span class="amount_num">{{item.patrol_number}}次</span>
+            </div>
+            <div class="amount" style="width:100%;">
+              <span class="amount_text">出动应急技术人员人次</span>
+              <span class="amount_num">{{item.dispatch_number}}人</span>
+            </div>
+          </div>
+          <div class="r_beizhu">
+            <div class="r_text"><span><van-icon name="location-o" /></span> {{item.address}}</div>
+            <div class="r_time">{{timestampToTime(item.start_time)}}</div>
+          </div>
         </div>
-        <div class="mar-tb-5">
-          <span class="f-gray">转移人数</span><span> 1204人</span>
-          <span class="f-gray" style="margin-left: 50px">巡查地灾点</span>
-          <span> 1524处 </span>
-        </div>
-        <div class="mar-tb-5">
-          <span class="f-gray">巡查高陡边坡</span><span> 154次</span>
-          <span class="f-gray" style="margin-left: 50px">巡查人次</span>
-          <span> 584次 </span>
-        </div>
-        <div class="mar-tb-5">
-          <span class="f-gray">出动应急技术人员人次</span>
-          <span> 201人 </span>
-        </div>
-        <div class="mar-tb-10">
-          <span class="f-gray">光泽县止马镇</span>
-          <span style="margin-left: 150px;"> 7月13日&nbsp;&nbsp;19:54 </span>
-        </div>
-      </div>
+      </van-list>
     </div>
   </div>
 </template>
 <script>
-import {getMyIndexAPI} from '../../api/mine'
+import {getMyIndexAPI,getReportingList} from '../../api/mine'
 export default {
   data(){
     return{
       myInfo: {},
       num:{},
+      list:[],
+      loading:false,
+      finished:false,
+      page:1,
     }
   },
   mounted() {
@@ -101,7 +120,7 @@ export default {
   },
   methods: {
     getMyIndex() {
-      getMyIndexAPI({phone: this.userinfo }).then(res => {
+      getMyIndexAPI({phone: this.$route.query.mobile }).then(res => {
         console.log(res)
         this.myInfo = res.my;
         this.num = {
@@ -113,6 +132,33 @@ export default {
         }
       })
     },
+    onLoad() {
+      // 异步更新数据
+      getReportingList({phone:this.$route.query.mobile,country:'',county:'',page:this.page}).then(res => {
+        // res.id = id
+        if(res.data.length >= 1){
+          this.list.push(...res.data);
+        }
+        
+        this.page += 1;
+        // 加载状态结束
+        this.loading = false;
+        // 数据全部加载完成
+        if (this.page > res.page.all) {
+          this.finished = true;
+        }
+      })
+    },
+    timestampToTime(timestamp) {
+      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '-';
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+      var D = date.getDate() + ' ';
+      var h = date.getHours() + ':';
+      var m = date.getMinutes() + ':';
+      var s = date.getSeconds();
+      return Y + M + D + h + m + s;
+    }
   },
 }
 
@@ -180,5 +226,66 @@ export default {
 		display: flex;
 		justify-content: space-between;
 		margin: 5px 0;
-	}
+  }
+  .record_list{
+    background-color: rgb(245, 239, 239);
+  }
+  .record{
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    margin-bottom: 5px;
+  }
+  .r_title{
+    font-size: 20px;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 0;
+    position: relative;
+  }
+  .r_title::after{
+    content: "";
+    position: absolute;
+    top: 20px;
+    right: 7px;
+    width: 7px;
+    height: 7px;
+    border-top: 2px solid #aaaaaa;
+    border-right: 2px solid #aaaaaa;
+    transform: rotate(45deg);
+  }
+  .amount{
+    width: 50%;
+    display: inline-block;
+    text-align: left;
+    font-size: 16px;
+    margin: 5px 0;
+  }
+  .amount_text{
+    color: #aea7a7;
+    padding-right:10px ;
+  }
+  .amount_num{
+    color: #000;
+  }
+  .r_beizhu{
+    padding: 15px 0;
+    font-size: 16px;
+  }
+  .r_text{
+    width: 50%;
+    display: inline-block;
+    text-align: left;
+    color: #000;
+  }
+    .r_text span{
+    color: red;
+  }
+  .r_time{
+    width: 50%;
+    display: inline-block;
+    text-align: right;
+    color: #aea7a7;
+  }
 </style>
