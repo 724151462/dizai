@@ -45,10 +45,13 @@
         @click="showTimePicker = true"
       />
       <van-field
-        v-model="zdAddress"
         readonly
+        clickable
+        name="picker"
+        :value="zdAddress"
         label="灾点地址"
-        placeholder="请输入灾点地址"
+        placeholder="点击选择地址"
+        @click="zdAddressPicker = true"
         class="border-b"
       />
       <van-field
@@ -108,15 +111,27 @@
         @cancel="showTimePicker = false"
       />
 </van-popup>
+<van-popup v-model="zdAddressPicker" position="bottom">
+  <van-picker
+    show-toolbar
+    :columns="locationList"
+    @confirm="confirmZd"
+    @cancel="zdAddressPicker = false"
+  />
+</van-popup>
   </div>
 </template>
 
 <script>
+import AMap from "AMap";
 export default {
   data() {
     return{
+      zdAddressPicker: false,
       picUploader: [],
       vdoUploader: [],
+      locationList: [
+      ],
       wxNum: '',
       tranNum: '',
       yingjiNum: '',
@@ -126,16 +141,43 @@ export default {
       zxTypeDialog: false,
       zxType: '',
       zhScale: '',
-      zdAddress: '光泽县芝麻镇芝麻村',
+      zdAddress: '',
       zxOption: ['塌陷', '泥石流', '山体滑坡'],
       happenOption: ['突发', '正常', '紧急'],
       happenType: '',
       happenTypeDialog: false
     }
   },
+  mounted() {
+    this.nav('灾（险）情上报');
+    this.getLocalNearby()
+  },
   methods:{
+    getLocalNearby() {
+      console.log(sessionStorage.getItem('location'))
+      let cpoint = sessionStorage.getItem('location').split(',')
+      var that = this
+      AMap.service(["AMap.PlaceSearch"], function() {
+        var placeSearch = new AMap.PlaceSearch({ 
+              pageSize: 10, // 单页显示结果条数
+              pageIndex: 1, // 页码
+          });
+          placeSearch.searchNearBy('', cpoint, 500, function(status, result) {
+            if (status == 'complete') {
+              console.log(result.poiList)
+              that.locationList = result.poiList.pois.map((item) => {
+                return item.name
+              })
+            }
+          });
+      })
+    },
     onSubmit(){
 
+    },
+    confirmZd(val) {
+      this.zdAddress = val
+      this.zdAddressPicker = false
     },
     onConfirm(value) {
       this.zxType = value;
@@ -155,9 +197,6 @@ export default {
       this.showTimePicker = false
     }
   },
-  mounted(){
-    this.nav('灾（险）情上报');
-  }
 }
 </script>
 

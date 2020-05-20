@@ -202,6 +202,7 @@ export default {
           console.log(66666);
           that.locationLoad = false
           var lnglatXY = [data.position.getLng(), data.position.getLat()]; //地图上所标点的坐标
+          sessionStorage.setItem('location', lnglatXY)
           console.log(lnglatXY)
           AMap.service("AMap.Geocoder", function() {
             //回调函数
