@@ -8,41 +8,41 @@
         <img src="../../assets/imgs/upload-btn.png" alt="">
       </router-link>
     </div>
-    <div class="zq-menu pu-row pu-row-sa bg-white pad-tb-10">
+    <div class="zq-menu pu-row pu-row-sa pad-tb-10">
       <div
-        :class="['pu-column', actIndex == 0 ? 'active' : '']"
+        class="pu-column al-center"
         @click="menuClick(0)"
       >
-        <van-icon badge="4" name="location-o" />
-        <span>地灾点</span>
+        <span class="iconfont icon-17huapoqu icon-border" :class="{active: actIndex==0}"></span>
+        <span class="f-white f-12">地灾点</span>
       </div>
       <div
-        :class="['pu-column', actIndex == 1 ? 'active' : '']"
+        class="pu-column al-center"
         @click="menuClick(1)"
       >
-        <van-icon badge="9" name="like-o" />
-        <span>高陡边坡</span>
+        <span class="iconfont icon-xiahua icon-border" :class="{active: actIndex==1}"></span>
+        <span class="f-white f-12">高陡边坡</span>
       </div>
       <div
-        :class="['pu-column', actIndex == 2 ? 'active' : '']"
+        class="pu-column al-center"
         @click="menuClick(2)"
       >
-        <van-icon badge="10" name="star-o" />
-        <span>一线报件</span>
+        <span class="iconfont icon-zaihai icon-border" :class="{active: actIndex==2}"></span>
+        <span class="f-white f-12">一线报件</span>
       </div>
       <div
-        :class="['pu-column', actIndex == 3 ? 'active' : '']"
+        class="pu-column al-center"
         @click="menuClick(3)"
       >
-        <van-icon badge="20" name="phone-o" />
-        <span>灾情点</span>
+        <span class="iconfont icon-jinggao icon-border" :class="{active: actIndex==3}"></span>
+        <span class="f-white f-12">灾情点</span>
       </div>
       <div
-        :class="['pu-column', actIndex == 4 ? 'active' : '']"
+        class="pu-column al-center"
         @click="menuClick(4)"
       >
-        <van-icon badge="12" name="fire-o" />
-        <span>险情点</span>
+        <span class="iconfont icon-renyuanweizhi icon-border" :class="{active: actIndex==4}"></span>
+        <span class="f-white f-12">险情点</span>
       </div>
     </div>
     <van-overlay :show="locationLoad">
@@ -99,7 +99,7 @@
       </div>
       <van-button @click="toDetail" style="width: 180px;background:linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71));" round type="warning">详情</van-button>
     </van-popup>
-    <bottomTabs></bottomTabs>
+    <bottomTabs :active="0"></bottomTabs>
   </div>
 </template>
 
@@ -196,6 +196,7 @@ export default {
       window.map = new AMap.Map("map", {
         resizeEnable: true,
         zoom: 11,
+        center: [118.083548,27.379802],
         layers: [new AMap.TileLayer(), new AMap.TileLayer.Satellite()],
       });
       window.map.plugin("AMap.Geolocation", function() {
@@ -259,7 +260,9 @@ export default {
           dzd.forEach(element => {
             let marker = new AMap.Marker({
                 position: [element.x_coordinate, element.y_coordinate],
-                content: '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
+                content: `<div class="icon-bg">
+                  <span class="iconfont icon-17huapoqu"></span>
+                </div>`,
                 offset: new AMap.Pixel(-15, -15),
                 extData: {id: element.id}
             })
@@ -287,7 +290,9 @@ export default {
           gdbp.forEach(element => {
             let marker = new AMap.Marker({
                 position: [element.x_coordinate, element.y_coordinate],
-                content: '<div style="background-color: hsla(180, 100%, 50%, 0.7); height: 24px; width: 24px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;"></div>',
+                content: `<div class="icon-bg">
+                  <span class="iconfont icon-xiahua"></span>
+                </div>`,
                 offset: new AMap.Pixel(-15, -15),
                 extData: {id: element.id}
             })
@@ -420,7 +425,7 @@ export default {
   z-index: 10;
 }
 .active {
-  color: #ee4d47;
+  background: #0E2453;
 }
 .dz-detail {
 }
@@ -442,5 +447,26 @@ export default {
         -o-text-overflow: ellipsis;
         white-space:nowrap;
         width: 90vw;
+}
+.icon-border{
+  border: 1px solid;
+  border-radius: 50px;
+  padding: 10px;
+  color: #fff;
+}
+.amap-zoomcontrol{
+  bottom: 355px !important;
+}
+.icon-bg{
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAABOCAYAAACdfWDpAAAL00lEQVR4XtVcCXAVVRY9t/+WBQIGDAgoDiW4FSqD6IDsYAgoEUEgIFvCIkESEhgYNkNEBBdMwk4mgqCOjDqjDCViIEqMgmOhgo6OOigoqyGs2f/P73en+mMiYPLf+0t+PreKolJ97r3nne6+/frd158QQPulZ88/EPROGqijALUncBsAzQCEA7D+SsUBcCmYzoBwBMBBwfQfqxD7I/fsMf4OiFF9Zinsd28LzWEdzBoPANNdAN/kQz42RALhCzC/59Qs21vl55/2IZ5b13oRprB39/5gSiDgYQAh9US+lIC3iWlT84KCD/ydw6/CFPXqMZmBWQBu9jdR9/H4a7C2PKqgYLO/8vpFmKJevUaBOBVAF38R8zLOHiJkNN9d8JaX/jVuPglzumfPW4UJWQRE+0rEz/7bhEmktsj7+JC3cb0W5nSfHvMYtNTbxAHwczBjTlR+wQpvcnksDHfubDndpNFGAGO8SRhwH6YNzXfnTybAeKopm0fCnOrduyVp/BEAXx67yuT8CPyKBd0XlZ9fqhpTWZjCPn3u1DTxLkCtVIOr4igsDBQeDjKbIcrKwOXlgNOp6q6GI/wgYB7QIi9Pqe4oCVPUr18HIvENALMaizpQRDC1vRGWTp1gue12aG3awHT9DSCb7XcOougU9KNHoR8+jKoD+1H11ZcXBfPNzjKZO167a9cJWRipMOf69m2ra/xfAGGyYHUdN7VpA1v/aNjuj4YWFeVdGF1H1f4vYN+1E/aCD325os44NcttLXfuPOWOiFthjEJ7JrKJIYpXNcXUrh3CRo+BtUdPgKTnQFkwcboIFW+8DvuOd8F2u7JfNZCAL5vt+uAur4U5Hd13L4CunmamiAiExU9EyMAH/CrIlTz0kydRvm41HJ/+21OKBq/c5rnvx9TlWOdpPB3Tbx4xPJ6nWDrfjfDZc6E1beo5WS89HAUfomxlJrhU+aHjykRM0yJ35q2rLW2twpwbdP9dQvB+j3gSIXRcPEJHxtXrVVIXJ3HyBErS06Af+dkj2jqb2kfl5v5wpVOtwpyJ6XcYoBuVM5jNCE+ZBVu//sou9QHkkhKULFoI57dGWVQ0wtfNduR1lApzJiZ6IohfVAwLaBoaLUiDtWs3ZZf6BBrFuGThPDi/+Vo5DTMPa/5e3mUvnpddMScGDw6z6fYLyvMVIoRPT4YtZpAyiUAAuawMxXNmQf/psGq6ksh7ujWl9HRxyZPrN99zg6IXMSFdNZotdgjCpiSqwgOKE4WFKE6eBi5TK8gESr1me25WrcKcfXCAsVRorMFKzdy+Axo/lwGYfZsMSxP5AKj6ZC9Kly5WjMDHI9/ZaaxBu6zmVjobGxMHxhalKCYTIrJWu6b3wW5lmcvh2P2+Ek0iPHTNtve2XSbMudiBRrW6XSWCbchQhMZPUoE2OIbPn0dx4iSl9ywGPo3ctuNPNcKcjY25g4i+VBmF8SYckbPZ9TZ8tVjlG1tQ+dorSnQtbGnZaNu2QtetdG7IAykAZ6p4hgwbgZAx41WgQYNxPaUmjQdXVkg5MWhs5Nbtr14UZuigbWAaLPXSNET8dRO0yEgpNNgAFTnrYd/xjpQWM78eufXdOOKBA20XQk1nfu0GunU0d+qM8IXKT3MpiUAC9EM/onR2ikrKwqZvvdOSzg5/sLsmyFiulFro9BRYe/eV4oIVUPL4FIjCX6T0hBAd6dzw2BnEXDOxcefVOPslaJFK0xxp8oYAVGSvgSMvV5qawQl0fsTg9WB6TIbWWrVG46y1MlhQH6/a8xHKVyxX4fg8XRj+UC5I3jCzdOuB0BlG9/XqNXH8GEpnTpcPgPEmXRg5xFh3cbvMZ0SyDRsB2/BR8qDBjNB1FI8bCei6hCXvoQtxD/8IoJ1sPKGJybD07C2DBf3x0uSpMDoQEvuOikc9bJTpFjJkaOocmLu4ZstXtZX9JRXiqGSVj+kwFY8eWgSguWy0oXPTYO54pwwW9MfLFy+E/v23Mp4/UfGjw44BaC1Dhs5eAPOdnWSwoD9e/uR86Af/554n4UcqGfvIt2DcIhtRSNJMmO/xuJMiCxvw4+XzZkEck27lO0AlY4fvASBdsLVNnApLr6t31lt9BsqSHwOfPyc7IblUMm7EmwAekSGtsUNhHTZSBgvq41xZibKpEwB2vyOEiDZQ6fi4pQyeJxuRuXMXhCRd5RO8n39C+aK5sqGCmeZSyYSRcQT5kiY1aYqwrPXSoMEMcO7eBfvLG6QUSWAQVUyIu1EnKPUZQp96HlrrmvViaYJgA9jXrYBzn7TPLYRujXItVJUmjPoeQAfZQKwjx8ASHVw9JBnnmuNOJ8pnKrVTPmu0cUuXi8JMHJ1BgLEd1a1p17dFyCKP+/yysAE5rh/4HPbVGSq5loRveO0JlzDlk0YPZdA/VbxC0pZCu/4GFWhQYexrs6Dv/0zKiYjuC8t5da9LmKKEhMZhJsd5AJrM03xPN1gnBWf3sS7uXHQKFU/MAYTsrRqlYa1vamK0amsabmVTxmwkIF4mDDQTQp58BhTVUgoNFoBjcw70vQVyOkyrwnJeSTaANcJUJo5uJ4TJWIKQmumOTrBOk5YkaZxAAMTRI7AvSwNETb++7rQm8w1ha186epkwrlozdexugJQWXayJKTAECmoTAvblSyAOy883M3aGZ788oHo8l20DqZga3xcklBq9FNEE1vmLYfwfrObcvhXGPxVjUNewdZtqJjm/21FVMW1CPoBeKsG0m2+FdfqfXZuHgs3Ed9/AsSZD6RYiYGvI2k3Gt1U19jthypMmtSHhdN1nKma6rxcsceMbZN9dXfz4xDHYM5cCFfKWrBHDYTU1a5K54axbYYyDldPjM1hhwlcdyNwvBuYhI1R0rHeM8Wh2rHxWZWnhVy78VOjqTWlXEqtzO2tlUsJ3nnypZurWC+YRYxr0tuKjP6NqfRa4pFj1BOwPWbXxj7WB6xYmdeJN0HFQNYOB027rCPOjCaBGjT1x8wtW7N+Hqi2bAXulcjxdcOvw1Rtr/a7A7T72iuSJY4noZeVMxsSoSVOXOFqHWz1x8x5rr4Rz6xvQP1Fqv/9WXBlDbCtf/FddiaUb/CtSJi0m4AlPmWud74U5dnj9Pc6ZIQ58BufW18HFxkZTD4wxJ2TFi8+785AK4yrGqVOyCTzFg9QXoWYLTH/qDq3PANA1ftpTIwTEV59Dz9sB4+njqREjw5qVI12KVBLGSO6YOXklg5I8JeLCE0Frfwu0u7tCu+V2ILyRZ2GEAB8/CnFgH8QX+8DFxvuuN0bLbBnZ81U8lYVxiTPrsakM1PpRgkqyapHoutagtu1cL6LU/FpQowjAaru4NdbYDuawgy+cBxcVgo8dgTh0EKjw7SMuYoq3ZqzfpMrTI2GMoFUzJ3djTTO2fF4VG2UY+IVYe9D6wrrPVUVxXeSegKuxnDLluioL/Q2gPt74B8qHGblWi2UsLVtltKE9Mq+Eqc7gmJOYDcDzouwRRW/BtNr63FrvaqK3V8ylVB2zp40Dsd9+U8FbGS71Y+JRtmfX/92XWD5dMdWJq+Ym9mfWNgDc0IvBhwgUb3l2jcJynXvZ/CKMkYLTkyKclSKvAX/44mOz3RpNmZlqr9SSy8lvwlTncc5/PJs54HUnw7JsjXTS5smt5XdhXPOdBUnTiXmVJ0S8xTJ4snXpGvUv8hQT1YswrvnOgmndwaa3AZbu1lLkeiXsBAsxxPrM2n1e+rt1qzdhXHVn0fRWuk7/AHv+7bZksPkmi3U4pb9wdf1G1ZWDci5IzgHBPx84Ma82P73K6/mJ6tVVr1fMpST0hclJDKxUJVY7jqaYl6zI8S2GmnfAhHHVnbQZ9xPjNZVdolfQP86C4yxPr/xYbVi+owIqjKvuzEu6Vpi1XAYUu3X8kanCOpCWLy/zfbjqEQIuTM18Z9GMl8CYIJl/rjIvznL1kgNtDSaMMVA9PWUmGC/UUU8STU9mNtjetgYVxhDEmZYykMhVdy7+fAjhpBDao5bFGbsDfZVcmq/BhXHVnSWprYWTPwTIoQHdKT3zsq5gQwj0fyJlzaYstVW/AAAAAElFTkSuQmCC);
+  height: 35px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 80%;
+  width: 35px;
+}
+.icon-bg>.iconfont{
+  position: relative;
+  top: 6px;
 }
 </style>

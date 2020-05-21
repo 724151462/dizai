@@ -27,7 +27,7 @@
     <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
     <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p><br><br><br>
     <div class="uploadHand" @click="to()">＋</div>
-    <bottomTabs></bottomTabs>
+    <bottomTabs :active="1"></bottomTabs>
   </div>
 </template>
 

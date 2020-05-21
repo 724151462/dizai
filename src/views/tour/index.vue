@@ -15,7 +15,7 @@
         <span>灾(险)情上报</span>
       </router-link>
     </div>
-    <bottomTabs></bottomTabs>
+    <bottomTabs :active="2"></bottomTabs>
   </div>
 </template>
 
