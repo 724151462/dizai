@@ -61,45 +61,43 @@
         style="align-items: flex-start;"
       >
         <h3>{{pDetail.address}}</h3>
-        <div class="img-wrapper pu-row">
+        <div class="img-wrapper pu-row" v-if="pDetail.images.length != 0">      
           <img
             height="185"
             class="mar-r-10"
-            v-for="(item, index) in 4"
-            src="../../assets/imgs/bad-bg.png"
+            v-for="(pic, index) in pDetail.images"
+            :src="pic"
             :key="index"
             alt=""
           />
         </div>
+        <van-empty v-else style="margin:0 auto;padding:0;" description="暂无图片" />
         <div
           class="pu-column dz-detail pad-tb-10"
           style="align-items: flex-start;"
         >
           <div class="mar-tb-5">
-            <span class="f-gray">灾害类型</span><span> {{pDetail.type}}</span
-            ><span class="f-gray" style="margin-left: 50px">灾害规模</span
-            ><span> {{pDetail.scale}}米</span>
+            <span class="f-gray">灾害类型： </span><span> {{pDetail.type}}</span
+            ><span class="f-gray" style="margin-left: 50px">灾害规模： </span
+            ><span> {{pDetail.scale}}m<sup>3</sup></span>
           </div>
           <div class="mar-tb-5">
-            <span class="f-gray">防治措施</span
+            <span class="f-gray">防治措施： </span
             ><span>{{pDetail.opinion}}</span>
           </div>
           <div class="mar-tb-5">
-            <span class="f-gray">威胁人数</span><span> {{pDetail.household}}人</span>
+            <span class="f-gray">威胁人数： </span><span> {{pDetail.household}}人</span>
+          </div>
+          <div class="mar-tb-5 zrrspan">
+            <span class="f-gray">责任人： </span><span v-for="(v,i) in ren" :key='i'>{{v.name}},</span>
           </div>
           <div class="mar-tb-5">
-            <span class="f-gray">责任人</span><span> {{pDetail.monitor}}</span>
-          </div>
-          <!-- <div class="mar-tb-5">
-            <span class="f-gray">联系方式</span><span> 18459183928</span>
-          </div> -->
-          <div class="mar-tb-5">
-            <span class="f-gray">发生时间</span
-            ><span> 2020年5月12日 14:00</span>
+            <span class="f-gray">发生时间： </span
+            ><span> {{timestampToTime(pDetail.happen_time)}}</span>
           </div>
         </div>
       </div>
-      <van-button @click="toDetail" style="width: 180px" round type="warning">详情</van-button>
+      <van-button @click="toDetail" style="width: 180px;background:linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71));" round type="warning">详情</van-button>
     </van-popup>
     <bottomTabs></bottomTabs>
   </div>
@@ -119,7 +117,10 @@ export default {
       yxbj: [{ id: "", lng: "116.377428", lat: "39.90923" }],
       zqd: [{ id: "", lng: "116.367428", lat: "39.90923" }],
       xqd: [{ id: "123", lng: "116.357428", lat: "39.90923" }],
-      pDetail: {}
+      pDetail: {
+        images:[]
+      },
+      ren:[]
     };
   },
   mounted() {
@@ -146,13 +147,16 @@ export default {
     // }else{
     //   this.localData('set','userinfo',this.getCookie('userinfo'));
     // }
-    
-    this.localData('set','userinfo','123456');
+    this.userinfo = {
+      phone:'123456',
+      position:'区县管理员'
+    }
+    this.localData('set','userinfo',this.userinfo);
     this.initMap();
   },
   methods: {
     getPoints() {
-      getPointsAPI({city: '松溪县', phone: this.userinfo})
+      getPointsAPI({city: '松溪县', phone: this.userinfo.phone})
       .then(res => {
         this.dzd = res.no_slope
         this.gdbp = res.slope
@@ -165,6 +169,23 @@ export default {
     getDetail(id) {
       getPointDetailAPI({id: id}).then(res => {
         // console.log(res)
+        var temp = res.monitor.split(/[\n,]/g);
+        for(var i =0;i<temp.length;i++){
+        if(temp[i] == ""){
+          temp.splice(i, 1);
+          //删除数组索引位置应保持不变
+          i--;
+        }
+      }
+      for(var j = 0;j<temp.length;j++){
+        var con = temp[j].split("，");
+        var name =   con[0].split("姓名：");
+        var phone =   con[1].split("电话：");
+        this.ren.push({
+          name:name[1],
+          phone:phone[1]
+        })
+      }
         res.id = id
         this.pDetail = res
       })
@@ -370,9 +391,16 @@ export default {
       console.log(this.pDetail)
       this.$router.push({path: '/index/zqdetail',query: {id: this.pDetail.id}})
     },
-    reg(){
-
-    }
+    timestampToTime(timestamp) {
+      var date = new Date(timestamp* 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '年';
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
+      var D = date.getDate() + '日 ';
+      var h = date.getHours() + ':';
+      var m = date.getMinutes() + ':';
+      var s = date.getSeconds();
+      return Y + M + D + h + m + s;
+    },
   },
 };
 </script>
@@ -407,5 +435,12 @@ export default {
 }
 .van-overlay{
   z-index: 999;
+}
+.zrrspan{
+   overflow: hidden; 
+        text-overflow: ellipsis; 
+        -o-text-overflow: ellipsis;
+        white-space:nowrap;
+        width: 90vw;
 }
 </style>

@@ -7,26 +7,20 @@
           <van-list
           v-model="loading[0]"
           :finished="finished[0]"
-          finished-text="没有更多了"
           @load="onLoad"
           :immediate-check='false'
         >
-          <div v-if="arr.length < 1 && finished[0] == false"><img width="100%" src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1820939238,2677153117&fm=26&gp=0.jpg" alt=""></div>
           <div @click="to(item.id)"  class="ctm" v-for="(item,i) in arr" :key="i">
               <div class="ctm_title">{{item.name}}</div>
               <div class="ctm_info">
                   <img :src="item.avatar" alt="">
                   <span>{{item.username}}</span>
                   <time>{{timestampToTime(item.happen_time)}}</time>
-                  <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
-                  <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
-                  <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
-                  <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
-                  <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
-                  <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
               </div>
           </div>
           </van-list>
+          <img v-if="page[0] >= maxPage[0]" src="../../assets/imgs/noGduo.png" alt="">
+          <p v-if="page[0] >= maxPage[0]" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
         </div>
       </van-tab>
       <van-tab title="办结">
@@ -34,7 +28,6 @@
             <van-list
           v-model="loading[1]"
           :finished="finished[1]"
-          finished-text="没有更多了"
           @load="onLoad"
           :immediate-check='false'
         >
@@ -44,15 +37,11 @@
                   <img :src="item.avatar" alt="">
                   <span>{{item.username}}</span>
                   <time>{{timestampToTime(item.happen_time)}}</time>
-                  <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
-                  <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
-                  <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
-                  <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
-                  <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
-                  <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
               </div>
             </div>
             </van-list>
+            <img v-if="page[1] >= maxPage[1]" src="../../assets/imgs/noGduo.png" alt="">
+            <p v-if="page[1] >= maxPage[1]" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
           </div>
       </van-tab>
       <van-tab title="列入">
@@ -60,7 +49,6 @@
           <van-list
           v-model="loading[2]"
           :finished="finished[2]"
-          finished-text="没有更多了"
           @load="onLoad"
           :immediate-check='false'
         >
@@ -71,15 +59,11 @@
                   <img :src="item.avatar" alt="">
                   <span>{{item.username}}</span>
                   <time>{{timestampToTime(item.happen_time)}}</time>
-                  <span v-if="item.status=='已删除'" class="ctm_type ysb" >已删除</span>
-                  <span v-if="item.status=='已上报'" class="ctm_type ysb" >已上报</span>
-                  <span v-if="item.status=='撤销办结'" class="ctm_type cxbj" >撤销办结</span>
-                  <span v-if="item.status=='已列入'" class="ctm_type ylr" >已列入</span>
-                  <span v-if="item.status=='已修改'" class="ctm_type yxg" >已修改</span>
-                  <span v-if="item.status=='已办结'" class="ctm_type ybj" >已办结</span>
               </div>
             </div>
           </van-list>
+          <img v-if="page[2] >= maxPage[2]" src="../../assets/imgs/noGduo.png" alt="">
+          <p v-if="page[2] >= maxPage[2]" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
         </div>
       </van-tab>
       <van-tab title="全部">
@@ -87,7 +71,6 @@
           <van-list
           v-model="loading[3]"
           :finished="finished[3]"
-          finished-text="没有更多了"
           @load="onLoad"
           :immediate-check='false'
         >
@@ -106,6 +89,8 @@
               </div>
             </div>
           </van-list>
+          <img v-if="page[3] >= maxPage[3]" src="../../assets/imgs/noGduo.png" alt="">
+          <p v-if="page[3] >= maxPage[3]" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
         </div>
       </van-tab>
     </van-tabs>
@@ -122,6 +107,7 @@ export default {
       page:[1,1,1,1],
       finished:[false,false,false,false,],
       loading:[false,false,false,false],
+      maxPage:[null,null,null,null],
       arr:[],
       arr2:[],
       arr3:[],
@@ -186,7 +172,7 @@ export default {
       if(this.type == '已办结') num = 1;
       if(this.type == '已列入') num = 2;
       if(this.type == 'all') num = 3;
-      getScheduleList({phone:this.userinfo ,type:this.type,page:this.page[num]}).then(res => {
+      getScheduleList({phone:this.userinfo.phone ,type:this.type,page:this.page[num]}).then(res => {
         // res.id = id
         if(res.data.length > 0){
           if(this.type == '已上报') this.arr.push(...res.data);
@@ -196,6 +182,7 @@ export default {
           // console.log(res.data);
           this.page[num] += 1;
           // 加载状态结束
+          this.maxPage[num] = res.page.all;
           this.loading[num] = false;
           // 数据全部加载完成
           if (this.page[num] > res.page.all) {
@@ -209,7 +196,7 @@ export default {
       })
     },
     timestampToTime(timestamp) {
-      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
       var Y = date.getFullYear() + '年';
       var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
       var D = date.getDate() + '日 ';

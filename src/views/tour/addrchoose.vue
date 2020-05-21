@@ -2,7 +2,7 @@
   <div>
     <div id="map"></div>
     <div class="ensure-btn">
-      <van-button @click="saveAddr" style="width: 180px" round type="warning">确认选择</van-button>
+      <van-button @click="saveAddr" style="width: 180px" round type="warning" color="linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71))">确认选择</van-button>
     </div>
   </div>
 </template>
@@ -51,7 +51,7 @@ export default {
       })
     },
     saveAddr() {
-      sessionStorage.setItem('selectedAddr', this.selected)
+      this.sessionData('set','selectedAddr',this.selected)
       this.$router.go(-1)
     }
   }

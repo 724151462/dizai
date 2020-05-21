@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="huise">
     <!-- <navBar :title="'我的'" :isBack="false"></navBar> -->
     <div class="mine-base pu-row">
       <div class="pu-row">
@@ -17,12 +17,13 @@
         </div>
       </div>
     </div>
-    <div>
-      <van-cell class="border-b" title="我的随手拍" is-link :value="num.readily" url="/mine/handPic" />
-      <van-cell class="border-b" v-if="userinfo.position != '群众'" title="巡查签到" is-link url="/mine/toursignrecord" :value="num.patrol?num.patrol:0" />
-      <van-cell class="border-b" v-if="userinfo.position != '群众' && userinfo.position != '社区管理员'" title="灾（险）情速报" is-link url="/mine/quickreport" :value="num.reporting?num.reporting:0" />
-      <van-cell class="border-b" v-if="userinfo.position != '群众'" title="灾（险）情上报" is-link url="/mine/reported" :value="num.schedule?num.schedule:0" />
-      <van-cell class="border-b" v-if="userinfo.position != '群众'" title="群众随手拍处理" is-link url="/mine/qzHandPic" :value="num.allreadily?num.allreadily:0" />
+    <div v-if='userinfo'>
+      <van-cell title="我的随手拍" is-link :value="num.readily" url="/mine/handPic" />
+      <van-cell v-if="userinfo.position != '群众'" title="巡查签到" is-link url="/mine/toursignrecord" :value="num.patrol?num.patrol:0" />
+      <van-cell v-if="userinfo.position != '群众' && userinfo.position != '社区管理员'" title="灾（险）情速报" is-link url="/mine/quickreport" :value="num.reporting?num.reporting:0" />
+      <van-cell v-if="userinfo.position != '群众'" title="灾（险）情上报" is-link url="/mine/reported" :value="num.schedule?num.schedule:0" />
+      <br>
+      <van-cell v-if="userinfo.position != '群众'" title="群众随手拍处理" is-link url="/mine/qzHandPic" :value="num.allreadily?num.allreadily:0" />
     </div>
     <div class="partment">
       <span>
@@ -39,7 +40,8 @@ export default {
   data() {
     return {
       myInfo: {},
-      num:{}
+      num:{},
+      userinfo:null
     }
   },
   mounted() {
@@ -49,7 +51,7 @@ export default {
   },
   methods:{
     getMyIndex() {
-      getMyIndexAPI({phone: this.userinfo }).then(res => {
+      getMyIndexAPI({phone: this.userinfo.phone }).then(res => {
         console.log(res)
         this.myInfo = res.my;
         this.num = {
@@ -103,5 +105,9 @@ export default {
 .partment{
   margin-top: 200px;
   color: @gray-5;
+}
+.huise{
+  background-color: #f8f8f8;
+  min-height: 100vh;
 }
 </style>

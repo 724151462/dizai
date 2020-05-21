@@ -52,7 +52,6 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多了"
         @load="onLoad"
       >
         <div 
@@ -99,6 +98,8 @@
         </div>
       </van-list>
     </div>
+    <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
+    <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
   </div>
 </template>
 <script>
@@ -112,6 +113,7 @@ export default {
       loading:false,
       finished:false,
       page:1,
+      maxPage:null
     }
   },
   mounted() {
@@ -139,7 +141,7 @@ export default {
         if(res.data.length >= 1){
           this.list.push(...res.data);
         }
-        
+        this.maxPage = res.page.all;
         this.page += 1;
         // 加载状态结束
         this.loading = false;

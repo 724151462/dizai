@@ -16,7 +16,7 @@
             alt=""
           />
         </template>
-        <van-empty v-else description="暂无图片" />
+        <van-empty v-else class="imgdx" description="暂无图片" />
       </div>
       <div class="mar-t-10 pu-row" @click="$router.push({path:'/personal/handPic',query:{mobile:item.mobile}})">
         <img src="../../assets/imgs/bad-bg.png" class="avatar-sm" alt="">
@@ -24,7 +24,9 @@
         <span class="f-gray" style="margin-left: 30px">{{time(item.uptime)}}</span>
       </div>
     </div>
-    
+    <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
+    <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p><br><br><br>
+    <div class="uploadHand" @click="to()">＋</div>
     <bottomTabs></bottomTabs>
   </div>
 </template>
@@ -36,6 +38,7 @@ export default {
     return {
       handList: [],
       page:1,
+      maxPage:null
     }
   },
   mounted() {
@@ -48,10 +51,14 @@ export default {
       return new Date(time*1000).getHours() +':'+ new Date(time*1000).getMinutes()
     },
     getHandList(){
-      getHandListAPI({phone:this.userinfo ,type:'all',page:this.page}).then(res => {
+      getHandListAPI({phone:this.userinfo.phone ,type:'all',page:this.page}).then(res => {
         this.handList = res.data
-        console.log(this.handList)
+        this.maxPage = res.page.all;
+        console.log(res)
       })
+    },
+    to(){
+      this.$router.push({path: '/handPic/upload'})
     }
   }
 }
@@ -60,5 +67,23 @@ export default {
 <style lang="less" scope>
 .van-empty{
   padding: 0 !important;
+}
+.uploadHand{
+  position: fixed;
+  right: 1.5rem;
+  bottom: 5rem;
+  background: linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71));
+  box-shadow: 0px 0px 20px rgb(255, 166, 163);
+  color: white;
+  font-size: 3rem;
+  text-align: center;
+  width: 4rem;
+  height: 4rem;
+  line-height:4rem;
+  border-radius: 100%;
+}
+.imgdx{
+  width:200px;
+  margin: 0 auto;
 }
 </style>

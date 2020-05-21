@@ -48,23 +48,20 @@
     </div>
     <div class="query_log">
         <div class="query_log_title">现场照片</div>
-        <div class="query_log_img" v-if="info.image.length > 0">
+        <div class="query_log_img" v-if="info.images.length > 0">
             <img 
-        v-for="(item,i) in info.image" :key="i"
-                :preview="i"
-                preview-text="描述文字"
-        src="../../assets/imgs/bad-bg.png" 
-        alt="">
-
-         
+            v-for="(item,i) in info.images" 
+            :preview="i" :key="i" alt=""
+            preview-text="描述文字"
+            src="../../assets/imgs/bad-bg.png" >
         </div>
-           <van-empty v-else description="暂无图片" />
+        <van-empty v-else description="暂无图片" />
     </div>
      <div class="query_log" >
         <div class="query_log_title">现场视频</div>
-        <div class="query_log_img" v-if="info.video1.length > 0" >
+        <div class="query_log_img" v-if="info.video.length > 0" >
             <div 
-            :key="i"  v-for="(item,i) in info.video1"
+            :key="i"  v-for="(item,i) in info.video"
               class="video_img" 
             @click="showPopup(item)">
                 <div></div>
@@ -106,14 +103,15 @@
     </van-popup>
     <br>
     <van-field 
+    v-if="info.status != '已删除'"
     label-class="redColor" 
     v-model="why" 
     label="处置原因" 
-    placeholder="(未通过、撤销、删除、驳回 必填原因)"/>
+    placeholder="(取消、撤销、删除、驳回 必填原因)"/>
     <br>
     <!-- 处置意见  指导一线处置/技术人员现场处置/出具调查报告/函告属地政府 -->
     <van-field
-    v-if="user == '区县级人员' && info.status == '已上报'"
+    v-if="userinfo.position == '区县管理员' && info.status == '已上报'"
     readonly
     clickable
     label="处置意见"
@@ -133,33 +131,46 @@
             @confirm="onConfirm"
         />
     </van-popup>
-    <div class="typeButton">
-        <van-row gutter="20" v-if="(info.personnel == userinfo || userinfo.position == '社区管理员' || userinfo.position == '乡镇管理员')&& info.status == '已上报'">
-            <van-col span="12"><van-button round type="info" @click="unsubscribe" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">撤销上报</van-button></van-col>
-            <van-col span="12"><van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">修改上报</van-button></van-col>
-            <br>
+    <div class="typeButton" v-if="userinfo">
+        <van-row gutter="20" v-if="(info.personnel == userinfo.phone || userinfo.position == '社区管理员' || userinfo.position == '乡镇管理员')&& info.status == '已上报'">
+            <van-col span="12"><van-button round type="info" @click="unsubscribe" size="large" color="linear-gradient(to right, rgb(224, 187, 76), rgb(250, 169, 43))">撤销上报</van-button></van-col>
+            <van-col span="12"><van-button round type="info" size="large" color="linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71))">修改上报</van-button></van-col>
         </van-row>
+        <br v-if="(info.personnel == userinfo.phone || userinfo.position == '社区管理员' || userinfo.position == '乡镇管理员')&& info.status == '已上报'">
         <van-row gutter="20" v-if="(userinfo.position == '区县管理员' || userinfo.position == '乡镇管理员')&& info.status == '已上报'">
-            <van-col span="12"><van-button round type="info" @click="notPass"  size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">驳回</van-button></van-col>
-            <van-col span="12"><van-button round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">报上级处理</van-button></van-col>
-            <br>
+            <van-col span="12"><van-button round type="info" @click="notPass"  size="large" color="linear-gradient(to right, rgb(224, 187, 76), rgb(250, 169, 43))">驳回</van-button></van-col>
+            <van-col span="12"><van-button round type="info" size="large" color="linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71))">报上级处理</van-button></van-col>
         </van-row>
-        
+        <br v-if="(userinfo.position == '区县管理员' || userinfo.position == '乡镇管理员')&& info.status == '已上报'">
         <van-row gutter="20" v-if="userinfo.position == '区县管理员' && info.status == '已上报'">
-            <van-col span="12"><van-button @click="unsubscribe" round type="info" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">删除上报</van-button></van-col>
-            <van-col span="12"><van-button round type="info" @click="finish" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">办结</van-button></van-col>
-            <br>
+            <van-col span="12"><van-button @click="unsubscribe" round type="info" size="large" color="linear-gradient(to right, rgb(224, 187, 76), rgb(250, 169, 43))">删除上报</van-button></van-col>
+            <van-col span="12"><van-button round type="info" @click="finish" size="large" color="linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71))">办结</van-button></van-col>
         </van-row>
+        <br v-if="userinfo.position == '区县管理员' && info.status == '已上报'">
         <van-row gutter="20" v-if="(userinfo.position == '区县管理员' ||  userinfo.position == '区市管理员') && info.status == '已办结'">
-            <van-col span="12"><van-button @click="cancellation" round type="info" size="large" color="linear-gradient(rgb(255, 214, 89), rgb(243, 162, 35))">撤销办结</van-button></van-col>
-            <van-col span="12"><van-button @click="includeList" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">列入系统</van-button></van-col>    
-            <br>
+            <van-col span="12"><van-button @click="cancellation" round type="info" size="large" color="linear-gradient(to right, rgb(224, 187, 76), rgb(250, 169, 43))">撤销办结</van-button></van-col>
+            <van-col span="12"><van-button @click="includeList" round type="info" size="large" color="linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71))">列入系统</van-button></van-col>    
         </van-row>
-        <van-row gutter="20" v-if="(userinfo.position == '区县管理员' ||  userinfo.position == '区市管理员')&& info.status == '已列入'">
-            <van-col span="16"><van-button  @click="delist" round type="info" size="large" color="linear-gradient( rgb(243, 124, 120),#EE4D47)">取消列入</van-button></van-col>    
-            <br>
+        <br v-if="(userinfo.position == '区县管理员' ||  userinfo.position == '区市管理员') && info.status == '已办结'">
+        <van-row type="flex" justify="center" gutter="20" v-if="(userinfo.position == '区县管理员' ||  userinfo.position == '区市管理员')&& info.status == '已列入'">
+            <van-col span="16"><van-button  @click="delist" round type="info" size="large" color="linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71))">取消列入</van-button></van-col>    
         </van-row>
     </div>
+    <van-overlay :show="success" class-name="wrapper" @click="hideSuccess()">
+        <div class="block" >
+            <img src="../../assets/imgs/success.png" style="margin-top:30px" alt="">
+            <h1 style="margin:20px 0 30px 0 ">{{msg}}</h1>
+        </div>
+    </van-overlay>
+    <van-overlay :show="affirm" class-name="wrapper" @click="hideAffirm()">
+        <div class="block" >
+            <h2 style="margin:60px auto;font-weight: 600;">{{hint}}</h2>
+            <van-row gutter="20">
+                <van-col span="12"><van-button @click="hideAffirm()" round type="info" size="large" color="linear-gradient(to right, rgb(212, 212, 212), rgb(192, 192, 192))">取消</van-button></van-col>
+                <van-col span="12"><van-button @click="affirmFun(fun)" round type="info" size="large" color="linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71))">确定</van-button></van-col>
+            </van-row>
+        </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -207,24 +218,41 @@ export default {
             value: '',
             showPicker: false,
             columns: [
-                {
-                    text:'指导一线处置',
-                    children:[]
-                },{
-                    text: '技术人员现场处置',
-                    children:['1人','2人','3人','4人','5人','6人','7人','8人','9人','10人']
-                },{
-                    text:'出具调查报告',
-                    children:[]
-                },{
-                    text:'函告属地政府',
-                    children:[]
-                }
+                {text:'指导一线处置',children:[]},
+                {text: '技术人员现场处置',children:['1人','2人','3人','4人','5人','6人','7人','8人','9人','10人']},
+                {text:'出具调查报告',children:[]},
+                {text:'函告属地政府',children:[]}
             ],
-            why:''
+            why:'',
+            userinfo:false,
+            success:false,
+            affirm:false,
+            msg:'',
+            hint:'确认要删除吗',
+            fun:null
         }
     },
     methods: {
+        hideSuccess(){
+            this.success = false;
+        },
+        showSuccess(name){
+            const _this = this;
+            this.success = true;
+            this.msg = name;
+            setTimeout(function(){
+                _this.hideSuccess();
+                setTimeout(function(){
+                    location.reload();
+                },1000)
+            },1500);
+        },
+        affirmFun(fun){
+            fun();
+        },
+        hideAffirm(){
+            this.affirm=false;
+        },
         onConfirm(value) {
             console.log(value);
             if(value[0] == '技术人员现场处置'){
@@ -236,52 +264,90 @@ export default {
         },
         // 驳回
         notPass() {
-            operatenotPassAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
-                console.log(res)
-                // if(res.status == 'fail')this.$toast.fail(res.msg);
-                // if(res.status == "success")this.$toast.success(res.msg);
-            })
+            if(this.why == '') return this.$toast.fail('请输入驳回的处置原因！');
+            this.hint = '确认要驳回吗？'
+            this.affirm = true;
+            const _this = this;
+            this.fun = function(){
+                operatenotPassAPI({id: _this.$route.query.id, phone: _this.userinfo.phone,opinion:_this.why}).then(res => {
+                    console.log(res)
+                    if(res.status == 'fail')_this.$toast.fail(res.msg);
+                    if(res.status == "success")_this.showSuccess(res.msg);
+                })
+            }
         },
         // 办结
         finish() {
-            operateFinishAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
-                console.log(res)
-                if(res.status == 'fail')this.$toast.fail(res.msg);
-                if(res.status == "success")this.$toast.success(res.msg);
-            })
+            if(this.value == '') return this.$toast.fail('请选择办结的处置原因！');
+            this.hint = '确认要办结吗？'
+            this.affirm = true;
+            const _this = this;
+            this.fun = function(){
+                operateFinishAPI({id: _this.$route.query.id, phone: _this.userinfo.phone,opinion:_this.value}).then(res => {
+                    console.log(res)
+                    if(res.status == 'fail')_this.$toast.fail(res.msg);
+                    if(res.status == "success")_this.showSuccess(res.msg);
+                })
+            }
         },
         // 列入
         includeList() {
-            operateIncludeListAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
-                console.log(res)
-                if(res.status == 'fail')this.$toast.fail(res.msg);
-                if(res.status == "success")this.$toast.success(res.msg);
-            })
+            this.hint = '确认要列入吗？'
+            this.affirm = true;
+            const _this = this;
+            this.fun = function(){
+                operateIncludeListAPI({id: _this.$route.query.id, phone: _this.userinfo.phone}).then(res => {
+                    console.log(res)
+                    if(res.status == 'fail')_this.$toast.fail(res.msg);
+                    if(res.status == "success")_this.showSuccess(res.msg);
+                })
+            }
         },
         // 取消列入
         delist() {
-            operateDelistAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
-                console.log(res)
-                if(res.status == 'fail')this.$toast.fail(res.msg);
-                if(res.status == "success")this.$toast.success(res.msg);
-            })
+            if(this.why == '') return this.$toast.fail('请输入取消列入的处置原因！');
+            this.hint = '确认要取消列入吗？'
+            this.affirm = true;
+            const _this = this;
+            this.fun = function(){
+                operateDelistAPI({id: _this.$route.query.id, phone: _this.userinfo.phone,opinion:_this.why}).then(res => {
+                    console.log(res)
+                    if(res.status == 'fail')_this.$toast.fail(res.msg);
+                    if(res.status == "success")_this.showSuccess(res.msg);
+                })
+            }
+            
+            
         },
         // 撤销上报
         unsubscribe() {
-            operateUnsubscribeAPI({id: this.$route.query.id, phone: this.userinfo,}).then(res => {
-                console.log(res)
-                if(res.status == 'fail')this.$toast.fail(res.msg);
-                if(res.status == "success")this.$toast.success(res.msg);
+            if(this.why == '') return this.$toast.fail('请输入撤销的处置原因！');
+            this.hint = '确认要撤销吗？'
+            this.affirm = true;
+            const _this = this;
+            this.fun = function(){
+                operateUnsubscribeAPI({id: _this.$route.query.id, phone: _this.userinfo.phone,opinion:_this.why}).then(res => {
+                    console.log(res)
+                    if(res.status == 'fail')_this.$toast.fail(res.msg);
+                    if(res.status == "success")_this.showSuccess(res.msg);
 
-            })
+                })
+            }
+            
         },
         // 撤销办结
         cancellation() {
-            operateCancellationAPI({id: this.$route.query.id, phone: this.userinfo}).then(res => {
-                console.log(res)
-                if(res.status == 'fail')this.$toast.fail(res.msg);
-                if(res.status == "success")this.$toast.success(res.msg);
-            })
+            if(this.why == '') return this.$toast.fail('请输入撤销办结的处置原因！');
+            this.hint = '确认要撤销办结吗？'
+            this.affirm = true;
+            const _this = this;
+            this.fun = function(){
+                operateCancellationAPI({id: _this.$route.query.id, phone: _this.userinfo.phone,opinion:_this.why}).then(res => {
+                    console.log(res)
+                    if(res.status == 'fail')_this.$toast.fail(res.msg);
+                    if(res.status == "success")_this.showSuccess(res.msg);
+                })
+            }
         },
         showPopup(url) {
             this.show = true;
@@ -296,7 +362,7 @@ export default {
             })
         },
         timestampToTime(timestamp) {
-            var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+            var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
             var Y = date.getFullYear() + '年';
             var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
             var D = date.getDate() + '日 ';
@@ -309,6 +375,7 @@ export default {
     mounted(){
         this.nav('灾(险)情上报记录详情');
         this.userinfo = this.localData('get','userinfo');
+        // console.log(this.userinfo);
         var id = this.$route.query.id;
         this.getInfo(id)
     },
@@ -317,6 +384,20 @@ export default {
 </script>
 
 <style>
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .block {
+      box-sizing: border-box;
+      padding: 20px;
+    width: 80vw;
+    border-radius: 20px;
+    background-color: #fff;
+  }
 .videoshow{
     width: 100vw;
     height: auto;

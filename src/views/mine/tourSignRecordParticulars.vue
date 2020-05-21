@@ -3,12 +3,12 @@
     <!-- <navBar :title="'巡查详情'"></navBar> -->
     <div>
         <div class="p_title">
-            {{log[0].name}}
+            {{info.address}}
         </div>
         <div class="p_img img-wrapper pu-row">
              <template v-if="info.images.length != 0" class="xxx">
                  <img
-                class="mar-r-5 aaaa"
+                class="mar-r-5 aaaaa"
                 v-for="(pic, index) in info.images"
                 :src="pic"
                 :key="index"
@@ -37,9 +37,10 @@
         </div>
         <div class="cell_group_line">
             <div class="line_title">监测人</div>
-            <div class="line_text">
-                <span>{{info.monitor}}</span>
+            <div class="line_text" v-if="ren.length > 0">
+                <div v-for="(item,i) in ren" :key='i'><span>{{item.name}}</span> / <span>{{item.phone}}</span></div>
             </div>
+            <div class="line_text" v-else >暂无</div>
         </div>
         <div class="cell_group_line">
             <div class="line_title">发生地点</div>
@@ -63,23 +64,18 @@
             <div class="line_title">威胁人数</div>
             <div class="line_text">{{info.number}}人</div>
         </div>
-        <!-- <div class="cell_group_line">
-            <div class="line_title">威胁财产</div>
-            <div class="line_text">10万元</div>
-        </div> -->
         <div class="cell_group_line">
             <div class="line_title">责任人</div>
-            <!-- <div class="line_text">
-                {{log[0].username}}
-                 / 
-                <span>{{log[0].mobile}}</span>
-            </div> -->
+            <div class="line_text" v-if="ren.length > 0">
+                <span>{{ren[0].name}}</span> / <span>{{ren[0].phone}}</span>
+            </div>
+            <div class="line_text" v-else >暂无</div>
         </div>
     </div>
     <div class="henxian"></div>
     <div class="query_log">
         <div class="query_log_title">查询记录</div>
-        <van-steps active-color="red" direction="vertical" :active="log.length">
+        <van-steps v-if="log.length > 0" active-color="red" direction="vertical" :active="log.length">
             <van-step v-for="(item,i) in log" :key="i">
                 <div class="p_steps_top">
                     <div class="top_time">{{timestampToTime(item.create_time)}}</div>
@@ -99,6 +95,7 @@
                 <p class="p_steps_bottom">{{item.content}}</p>
             </van-step>
         </van-steps>
+        <van-empty v-else description="暂无记录" />
     </div>
     
   </div>
@@ -112,10 +109,9 @@ export default {
             info:{
                 images: []
             },
-            log:[
-                {
-                    name: ''
-                }
+            log:[],
+            ren:[
+                {name:'',phone:''}
             ]
         }
     },
@@ -124,11 +120,31 @@ export default {
         patrolInfo({id:id}).then(res => {
             console.log(res)
             this.info = res.data;
+            var temp = this.info.monitor.split(/[\n,]/g);
+            for(var i =0;i<temp.length;i++){
+                if(temp[i] == ""){
+                temp.splice(i, 1);
+                //删除数组索引位置应保持不变
+                i--;
+                }
+            }
+            console.log(temp);
+            this.ren = [];
+            for(var j = 0;j<temp.length;j++){
+                var con = temp[j].split("，");
+                var name =   con[0].split("姓名：");
+                var phone =   con[1].split("电话：");
+                this.ren.push({
+                    name:name[1],
+                    phone:phone[1]
+                })
+            }
+            console.log(this.ren);
             this.log = res.log;
         })
     },
     timestampToTime(timestamp) {
-      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var date = new Date(timestamp* 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
       var Y = date.getFullYear() + '年';
       var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
       var D = date.getDate() + '日 ';
@@ -157,12 +173,13 @@ export default {
 .p_img{
     box-sizing: border-box;
     padding:0 20px ;
-    margin-bottom: 50px;
-    
+    margin-bottom:20px;
+    padding-bottom: 20px;
+    box-shadow: 0px 3px 10px #cac7c7;
 }
 .xxx{
     display: flex;
-  flex-direction:  row ;
+    flex-direction:  row ;
 }
 .p_img img{
     border-radius: 10px;
@@ -179,6 +196,7 @@ export default {
 .cell_group_line .line_title{
     display: inline-block;
     width: 20%;
+     vertical-align:top;
     color: rgb(157, 159, 161);
     text-align: right;
 }
@@ -191,7 +209,7 @@ export default {
     display: inline-block;
 }
 .cell_group_line .line_text span{
-    color: #1989fa;
+    color: #00caf8;
 }
 .query_log{
     box-sizing: border-box;
@@ -240,7 +258,16 @@ export default {
 .top_text span{
     color: red;
 }
-.aaaa{
-    height: 150px;
+.aaaaa{
+    width: 90vw;
+    height: 200px;
+}
+.img-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+.pu-row {
+    display: flex;
+    align-items: center;
 }
 </style>

@@ -47,14 +47,13 @@
     <van-list
       v-model="loading"
       :finished="finished"
-      finished-text="没有更多了"
       @load="onLoad"
     >
       <div 
       v-for="(item,index) in list" 
       :key="index" 
-      class="pad-lr-10 pad-tb-10 pu-column al-start" 
-      :class="index !=6 ? 'border-split' : ''">
+      class="pad20 pu-column al-start" 
+      :class="index != list.length-1 ? 'border-split' : ''">
         <span class="f-22"><b>{{item.name}}</b></span>
         <span class="mar-tb-10">{{item.content}}</span>
         <div class="img-wrapper pu-row">
@@ -75,6 +74,8 @@
         </div>
       </div>
     </van-list>
+    <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
+    <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
   </div>
 </template>
 
@@ -90,6 +91,7 @@ export default {
       actIndex:'',
       myInfo: {},
       num:{},
+      maxPage:null
     }
   },
   mounted() {
@@ -99,7 +101,7 @@ export default {
   methods:{
     getMyIndex() {
       getMyIndexAPI({phone: this.$route.query.mobile }).then(res => {
-        console.log(res.patrol)
+        console.log(res)
         this.myInfo = res.my;
         this.num = {
           readily:res.readily,
@@ -117,7 +119,7 @@ export default {
         if(res.data.length >= 1){
           this.list.push(...res.data);
         }
-        
+        this.maxPage = res.page.all;
         this.page += 1;
         // 加载状态结束
         this.loading = false;
@@ -128,7 +130,7 @@ export default {
       })
     },
     timestampToTime(timestamp) {
-      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var date = new Date(timestamp* 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
       var Y = date.getFullYear() + '-';
       var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
       var D = date.getDate() + ' ';
@@ -192,5 +194,12 @@ export default {
 }
 .no-more{
   background-color: #F8F8FB;
+}
+.pad20{
+  padding: 20px;
+}
+.van-empty__image {
+    width: 160px;
+    height: auto;
 }
 </style>

@@ -53,7 +53,6 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多了"
         @load="onLoad"
         :immediate-check='false'
       >
@@ -71,6 +70,8 @@
         </div>
       </van-list>
     </div>
+    <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
+    <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
   </div>
 </template>
 <script>
@@ -85,6 +86,7 @@ export default {
       finished:false,
       loading:false,
       list:[],
+      maxPage:null
     }
   },
   mounted() {
@@ -113,6 +115,7 @@ export default {
         if(res.data.length > 0){
           if(this.type == 'all') this.list.push(...res.data);
           this.page += 1;
+          this.maxPage = res.page.all;
           // 加载状态结束
           this.loading = false;
           // 数据全部加载完成
@@ -127,7 +130,7 @@ export default {
       })
     },
     timestampToTime(timestamp) {
-      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var date = new Date(timestamp* 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
       var Y = date.getFullYear() + '年';
       var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
       var D = date.getDate() + '日 ';

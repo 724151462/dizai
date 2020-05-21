@@ -10,7 +10,6 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多了"
           @load="onLoad"
         >
         <div 
@@ -56,6 +55,8 @@
             </div>
         </div>
         </van-list>
+        <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
+        <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
     </div>
   </div>
 </template>
@@ -74,7 +75,8 @@ export default {
       finished:false,
       page:1,
       country:'',
-      county:''
+      county:'',
+      maxPage:null,
 
     };
   },
@@ -83,12 +85,13 @@ export default {
         this.$router.push({path: '/mine/quickreportparticulars',query:{id:id}});
     },
     getList(){
-        getReportingList({phone:this.userinfo ,country:this.country,county:this.county,page:this.page}).then(res => {
+        getReportingList({phone:this.userinfo.phone ,country:this.country,county:this.county,page:this.page}).then(res => {
         // res.id = id
         if(res.data.length > 0){
           this.recordArr.push(...res.data);
           console.log(res.data);
           this.page += 1;
+          this.maxPage = res.page.all;
           // 加载状态结束
           this.loading = false;
           // 数据全部加载完成
@@ -103,7 +106,7 @@ export default {
       })
     },
     onLoad() {
-      getReportingList({phone:this.userinfo ,country:this.country,county:this.county,page:this.page}).then(res => {
+      getReportingList({phone:this.userinfo.phone ,country:this.country,county:this.county,page:this.page}).then(res => {
         // res.id = id
         if(res.data.length > 0){
             console.log(res.data);
@@ -125,7 +128,7 @@ export default {
           console.log(arr,arr2);
           this.option1 = arr;
           this.option2 = arr2;
-          
+          this.maxPage = res.page.all;
           this.value1 = arr[0].value;
           this.value2 = arr2[0].value;
           // console.log(res.data);
@@ -171,7 +174,7 @@ export default {
         this.getList();
     },
     timestampToTime(timestamp) {
-      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var date = new Date(timestamp* 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
       var Y = date.getFullYear() + '年';
       var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
       var D = date.getDate() + '日 ';

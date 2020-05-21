@@ -9,8 +9,17 @@
         :value="value"
         label="灾险点"
         placeholder="请选择灾点名称"
-        class="border-b"
+        @click="showPicker = true"
       />
+
+      <van-popup v-model="showPicker" round position="bottom">
+        <van-picker
+          show-toolbar
+          :columns="columns"
+          @cancel="showPicker = false"
+          @confirm="onConfirm"
+        />
+      </van-popup>
       <van-field
         v-model="address"
         name="巡查位置"
@@ -18,7 +27,7 @@
         placeholder="点击选择巡查位置"
         @click="toChooseAddr"
         readonly
-        class="border-b"
+
       />
       <van-field
         readonly
@@ -28,7 +37,7 @@
         label="情况描述"
         placeholder="请选择灾点情况"
         @click="showDetailPicker = true"
-        class="border-b"
+
       />
       <van-field
         v-if="detailValue == '其他迹象'"
@@ -36,7 +45,7 @@
         name="其他迹象"
         label="其他迹象"
         placeholder="请输入其他迹象"
-        class="border-b"
+
       />
       <van-field
         name="照片上传"
@@ -70,7 +79,7 @@
     <div class="confirm-wrapper pu-column al-center">
       <span class="f-12 f-gray">上报人：张某/巡查员</span>
       <span class="f-12 f-gray">建阳市童游街道自然资源管理所</span>
-      <van-button class="mar-t-10" style="width: 150px;" round type="warning">确认上传</van-button>
+      <van-button class="mar-t-10" style="width: 180px;" color="linear-gradient(to right, rgb(255, 166, 163), rgb(238, 77, 71))" round type="warning">确认上传</van-button>
     </div>
   </div>
 </template>
@@ -123,6 +132,6 @@ export default {
   color: @gray-5
 }
 .confirm-wrapper{
-  margin-top: 30vh;
+  margin-top: 25vh;
 }
 </style>

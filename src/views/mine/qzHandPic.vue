@@ -6,14 +6,13 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多了"
           @load="onLoad"
         >
         <div
           v-for="(item, index) in unprocessedArr"
           :key="index"
-          class="pad-lr-10 pad-tb-10 pu-column al-start"
-          :class="index != 6 ? 'border-split' : ''"
+          class="pad20 pu-column al-start"
+          :class="index != unprocessedArr.length-1 ? 'border-split' : ''"
         >
           <span class="f-22"><b>{{item.name}}</b></span>
           <span class="mar-tb-10">{{item.content}}</span>
@@ -33,7 +32,7 @@
             
           </div>
           <div class="mar-t-10 pu-row pu-row-sb" style="width:100%">
-            <div class="pu-row">
+            <div class="pu-row" @click="to(item.mobile)">
               <img :src="item.avatar" class="avatar-sm" alt="">
               <span class="mar-l-5">{{item.username}}</span>
               <span class="f-gray" style="margin-left: 30px">{{timestampToTime(item.uptime)}}</span>
@@ -45,19 +44,20 @@
           </div>
         </div>
         </van-list>
+        <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
+        <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
       </van-tab>
       <van-tab title="已处理">
         <van-list
           v-model="loading2"
           :finished="finished2"
-          finished-text="没有更多了"
           @load="onLoad2"
         >
         <div
           v-for="(item, index) in processedArr"
           :key="index"
-          class="pad-lr-10 pad-tb-10 pu-column al-start"
-          :class="index != 6 ? 'border-split' : ''"
+          class="pad20 pu-column al-start"
+          :class="index != processedArr.length-1 ? 'border-split' : ''"
         >
           <span class="f-22"><b>{{item.name}}</b></span>
           <span class="mar-tb-10">{{item.content}}</span>
@@ -77,7 +77,7 @@
             
           </div>
           <div class="mar-t-10 pu-row pu-row-sb" style="width:100%">
-            <div class="pu-row">
+            <div class="pu-row" @click="to(item.mobile)">
               <img :src="item.avatar" class="avatar-sm" alt="">
               <span class="mar-l-5">{{item.username}}</span>
               <span class="f-gray" style="margin-left: 30px">{{timestampToTime(item.uptime)}}</span>
@@ -88,6 +88,8 @@
           </div>
         </div>
         </van-list>
+        <img v-if="page2 >= maxPage2" src="../../assets/imgs/noGduo.png" alt="">
+        <p v-if="page2 >= maxPage2" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
       </van-tab>
     </van-tabs>
   </div>
@@ -106,7 +108,9 @@ export default {
       loading2: false,
       finished2: false,
       page2:1,
-      type:'未处理'
+      type:'未处理',
+      maxPage2:null,
+      maxPage:null
     }
   },
   mounted() {
@@ -134,12 +138,14 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      getMyReadilyList({phone:this.userinfo ,type:this.type,page:this.page}).then(res => {
+      getMyReadilyList({phone:this.userinfo.phone ,type:this.type,page:this.page}).then(res => {
         console.log(res)
         // res.id = id
         if(res.data.length >= 1){
           this.unprocessedArr.push(...res.data);
+          console.log(res.data);
         }
+        this.maxPage = res.page.all;
         this.page += 1;
         // 加载状态结束
         this.loading = false;
@@ -151,13 +157,14 @@ export default {
     },
     onLoad2() {
       // 异步更新数据
-      getMyReadilyList({phone:this.userinfo ,type:this.type,page:this.page2}).then(res => {
+      getMyReadilyList({phone:this.userinfo.phone ,type:this.type,page:this.page2}).then(res => {
         console.log(res)
         // res.id = id
         if(res.data.length >= 1){
           this.processedArr.push(...res.data);
         }
         this.page2 += 1;
+        this.maxPage2 = res.page.all;
         // 加载状态结束
         this.loading2 = false;
         // 数据全部加载完成
@@ -215,7 +222,7 @@ export default {
       })
     },
     timestampToTime(timestamp) {
-      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var date = new Date(timestamp* 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
       var Y = date.getFullYear() + '-';
       var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
       var D = date.getDate() + ' ';
@@ -223,6 +230,9 @@ export default {
       var m = date.getMinutes() + ':';
       var s = date.getSeconds();
       return Y + M + D + h + m + s;
+    },
+    to(mobile){
+      this.$router.push({path: '/personal/handPic',query:{mobile:mobile}})
     }
   }
   
@@ -240,5 +250,11 @@ export default {
     width: auto;
   }
 }
-
+.van-empty__image {
+    width: 160px;
+    height: auto;
+}
+.pad20{
+  padding: 20px;
+}
 </style>

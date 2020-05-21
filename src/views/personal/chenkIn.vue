@@ -47,14 +47,13 @@
     <van-list
       v-model="loading"
       :finished="finished"
-      finished-text="没有更多了"
       @load="onLoad"
     >
       <div 
       v-for="(item,index) in list" 
       :key="index" 
-      class="pad-lr-10 pad-tb-10 pu-column al-start" 
-      :class="index !=6 ? 'border-split' : ''">
+      class="pad20 pu-column al-start" 
+      :class="index != list.length-1 ? 'border-split' : ''">
         <span class="f-22"><b>{{item.name}}</b></span>
         <span class="mar-tb-10">{{item.content}}</span>
         <div class="img-wrapper pu-row">
@@ -75,6 +74,8 @@
         </div>
       </div>
     </van-list>
+    <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
+    <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
   </div>
 </template>
 
@@ -89,6 +90,7 @@ export default {
       page:1,
       myInfo: {},
       num:{},
+      maxPage:null
     }
   },
   mounted() {
@@ -110,12 +112,12 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      patrolList({phone:this.userinfo,type:"",page:this.page}).then(res => {
+      patrolList({phone:this.userinfo.phone,type:"",page:this.page}).then(res => {
         // res.id = id
         if(res.data.length >= 1){
           this.list.push(...res.data);
         }
-        
+        this.maxPage = res.page.all;
         this.page += 1;
         // 加载状态结束
         this.loading = false;
@@ -126,7 +128,7 @@ export default {
       })
     },
     timestampToTime(timestamp) {
-      var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var date = new Date(timestamp* 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
       var Y = date.getFullYear() + '-';
       var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
       var D = date.getDate() + ' ';
@@ -190,5 +192,8 @@ export default {
 }
 .no-more{
   background-color: #F8F8FB;
+}
+.pad20{
+  padding: 20px;
 }
 </style>

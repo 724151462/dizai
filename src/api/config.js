@@ -1,4 +1,5 @@
 import axios from 'axios'
+import QS from 'qs';
 export function get(url, params){    
   return new Promise((resolve, reject) =>{        
       axios.get(url, {            
@@ -11,7 +12,7 @@ export function get(url, params){
 });}
 export function post(url, params) {
   return new Promise((resolve, reject) => {
-       axios.post(url, params)
+       axios.post(url, QS.stringify(params))
       .then(res => {
           resolve(res.data);
       })

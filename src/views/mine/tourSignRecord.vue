@@ -1,18 +1,17 @@
 <template>
-  <div>
+  <div class="hui">
     <!-- <navBar :title="'巡查签到记录'"></navBar> -->
     <van-tabs @click="recodeChange">
       <van-tab title="巡查记录">
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多了"
           @load="onLoad"
         >
         <div
           v-for="(item, index) in arr"
           :key="index"
-          class="pad-lr-10 pad-tb-10 pu-column al-start"
+          class="pad20 pu-column al-start"
         >
           <span class="f-22" @click="to(item.main_id)"><b>{{item.name}}</b></span>
           <span class="mar-tb-10" @click="to(item.main_id)">{{item.content}}</span>
@@ -37,16 +36,19 @@
           </div>
         </div>
         </van-list>
+        <img v-if="page >= maxPage" src="../../assets/imgs/noGduo.png" alt="">
+        <p v-if="page >= maxPage" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
       </van-tab>
       <van-tab title="按地灾点">
         <van-list
           v-model="loading2"
           :finished="finished2"
-          finished-text="没有更多了"
           @load="onLoad2"
         >
-          <van-cell @click="to(item.id)" v-for="(item,i) in arr2" :title="item.address" :key="i" is-link />
+          <van-cell class="top10" @click="to(item.id)" v-for="(item,i) in arr2" :title="item.address" :key="i" is-link />
         </van-list>
+        <img v-if="page2 >= maxPage2" src="../../assets/imgs/noGduo.png" alt="">
+        <p v-if="page2 >= maxPage2" style="color:#cfcfcf;font-size:20px;margin:5px 0">没有更多了</p>
       </van-tab>
     </van-tabs>
   </div>
@@ -66,6 +68,8 @@ export default {
       loading2:false,
       finished2:false,
       page2:1,
+      maxPage:null,
+      maxPage2:null
     }
   },
   methods: {
@@ -82,13 +86,14 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      patrolList({phone:this.userinfo,page:this.page}).then(res => {
+      patrolList({phone:this.userinfo.phone,page:this.page}).then(res => {
         console.log(res);
         if(res.data.length > 0){
           this.arr.push(...res.data);
           this.page += 1;
           // 加载状态结束
           this.loading = false;
+          this.maxPage = res.page.all;
           // 数据全部加载完成
           if (this.page > res.page.all) {
             this.finished = true;
@@ -101,13 +106,14 @@ export default {
       })
     },
     onLoad2(){
-      disasterPatrolList({phone:this.userinfo,page:this.page2}).then(res => {
+      disasterPatrolList({phone:this.userinfo.phone,page:this.page2}).then(res => {
         console.log(res);
         if(res.data.length > 0){
           this.arr2.push(...res.data);
           // console.log(res.data);
           this.page2 += 1;
           // 加载状态结束
+           this.maxPage2 = res.page.all;
           this.loading2 = false;
           // 数据全部加载完成
           if (this.page2 > res.page.all) {
@@ -131,11 +137,26 @@ export default {
 <style>
 .aaaa{
   height: 150px;
-  overflow-x: auto;
+  /* overflow-x: auto; */
     display: flex;
 }
 .xxx{
     display: flex;
   flex-direction:  row ;
+}
+.pad20{
+  padding: 10px 20px;
+  margin-top: 5px;
+  background-color: white;
+}
+.hui{
+  background-color: #f6f6f6;
+  min-height: 100vh;
+}
+.top10{
+  margin-top: 5px;
+}
+.van-empty{
+  padding: 0;
 }
 </style>
